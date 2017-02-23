@@ -23,19 +23,17 @@
         <script src="https://d3js.org/topojson.v1.min.js"></script>
         <script src="https://d3js.org/queue.v1.min.js"></script>
         <script>
-            var USMap, div, USMapS;
+            var USMap, div, USMapS, projection, path, projection2, path2;
             //SVG
             var svg = d3.select("body").append("svg")
             .attr("width", 1272)
-            .attr("height", 680)
-            .append("a")
-            .attr("transform", "translate(50, 20)");
+            .attr("height", 530);
             
-            var projection = d3.geo.albersUsa()
-            .translate([636, 340])
+            projection = d3.geo.albersUsa()
+            .translate([636, 250])
             .scale([1000]);
             
-            var path = d3.geo.path().projection(projection);
+            path = d3.geo.path().projection(projection);
             
             queue()
             .defer(d3.json, "Data/states.json")
@@ -64,6 +62,12 @@
                     dataset[i][2] = +crimeDevidedByStates[i].Total;
                 }
                 
+                d3.selection.prototype.moveToFront = function(){
+                    return this.each(function(){
+                        this.parentNode.appendChild(this);
+                    });
+                };
+                
                 USMap = svg.selectAll("pathUS")
                 .data(states.features)
                 .enter()
@@ -75,69 +79,15 @@
                       return "s" + d.id;
                 })
                 .on("mouseover", function(d, i){
-                    d3.select(this).transition()
-                    .duration(200)
-                    .attr("fill", "orange");
-                    
-                    div.transition()
-                    .duration(200)
-                    .style("opacity", 0.8);
-                    
-                    for (var i = 0; i < dataset.length; i++){
-                        if (d.id == dataset[i][0]){
-                            div.html(d.properties.name + "<br/>" + dataset[i][2] + " Crimes")
-                            .style("left", (d3.event.pageX) + "px")
-                            .style("top", (d3.event.pageY - 28) + "px");
-                            colorFlag = dataset[i][2];
-                        }
-                    }
-                })
-                .on("mouseout", function(d, i){
-                    d3.select(this).transition()
-                    .duration(500)
-                    .attr("fill", color(colorFlag));
-                    
-                    div.transition()
-                    .duration(500)
-                    .style("opacity", 0);
-                })
-                .on("click", function(d){
-                    USMap.transition()
-                    .duration(500)
-                    .style("opacity", 0)
-                    .remove();
-                    
-                    div.transition()
-                    .duration(500)
-                    .style("opacity", 0)
-                    .remove();
-                    
-                    projection = d3.geo.albersUsa()
-                    .translate([636, 340])
-                    .scale([500]);
-                    
-                    path = d3.geo.path().projection(projection);
-                    
-                    USMapS = svg.selectAll("pathUS")
-                    .data(states.features)
-                    .enter()
-                    .append("path")
-                    .attr("stroke-width", 1)
-                    .attr("stroke", "#ccc")
-                    .attr("d", path)
-                    .attr("id", function(d){
-                          return "ss" + d.id;
-                    })
-                    .style("opacity", 0)
-                    .on("mouseover", function(d, i){
+                    if (d3.select(this).style("opacity") == 1){
                         d3.select(this).transition()
                         .duration(200)
                         .attr("fill", "orange");
-                        
+                    
                         div.transition()
                         .duration(200)
                         .style("opacity", 0.8);
-                        
+                    
                         for (var i = 0; i < dataset.length; i++){
                             if (d.id == dataset[i][0]){
                                 div.html(d.properties.name + "<br/>" + dataset[i][2] + " Crimes")
@@ -146,27 +96,117 @@
                                 colorFlag = dataset[i][2];
                             }
                         }
-                    })
-                    .on("mouseout", function(d, i){
+                    }
+                })
+                .on("mouseout", function(d){
+                    if (d3.select(this).style("opacity") == 1){
                         d3.select(this).transition()
                         .duration(500)
                         .attr("fill", color(colorFlag));
-                        
+                    
                         div.transition()
                         .duration(500)
                         .style("opacity", 0);
-                    });
-                    for (var i = 0; i < crimeDevidedByStates.length; i++){
-                        d3.select("#ss" + crimeDevidedByStates[i].ID).attr("fill", color(+crimeDevidedByStates[i].Total));
                     }
+                })
+                .on("click", function(d){
+                    for (var i = 0; i < crimeDevidedByStates.length; i++){
+                        d3.select("#ss" + crimeDevidedByStates[i].ID).moveToFront();
+                        d3.select("#s" + crimeDevidedByStates[i].ID).attr("fill", color(+crimeDevidedByStates[i].Total));
+                    }
+                    
+                    USMap.transition()
+                    .duration(600)
+                    .style("opacity", 0);
+                    
+                    div.transition()
+                    .duration(500)
+                    .style("opacity", 0);
+                    
                     USMapS.transition()
-                    .duration(1000)
-                    .style("opacity", 1)
+                    .duration(500)
+                    .style("opacity", 1);
                 });
                 
                 for (var i = 0; i < crimeDevidedByStates.length; i++){
                     d3.select("#s" + crimeDevidedByStates[i].ID).attr("fill", color(+crimeDevidedByStates[i].Total));
                 }
+                
+                projection2 = d3.geo.albersUsa()
+                .translate([230, 120])
+                .scale([500]);
+                
+                path2 = d3.geo.path().projection(projection2);
+                
+                USMapS = svg.selectAll("pathUS")
+                .data(states.features)
+                .enter()
+                .append("path")
+                .attr("stroke-width", 1)
+                .attr("stroke", "#ccc")
+                .attr("d", path2)
+                .attr("id", function(d){
+                      return "ss" + d.id;
+                })
+                .style("opacity", 0)
+                .on("mouseover", function(d, i){
+                    if (d3.select(this).style("opacity") == 1){
+                        d3.select(this).transition()
+                        .duration(200)
+                        .attr("fill", "orange");
+                    
+                        div.transition()
+                        .duration(200)
+                        .style("opacity", 0.8);
+                    
+                        for (var i = 0; i < dataset.length; i++){
+                            if (d.id == dataset[i][0]){
+                                div.html(d.properties.name + "<br/>" + dataset[i][2] + " Crimes")
+                                .style("left", (d3.event.pageX) + "px")
+                                .style("top", (d3.event.pageY - 28) + "px");
+                                colorFlag = dataset[i][2];
+                            }
+                        }
+                    }
+                })
+                .on("mouseout", function(d){
+                    if (d3.select(this).style("opacity") == 1){
+                        d3.select(this).transition()
+                        .duration(500)
+                        .attr("fill", color(colorFlag));
+                    
+                        div.transition()
+                        .duration(500)
+                        .style("opacity", 0);
+                    }
+                })
+                .on("click", function(d){
+                    for (var i = 0; i < crimeDevidedByStates.length; i++){
+                        d3.select("#s" + crimeDevidedByStates[i].ID).moveToFront();
+                        d3.select("#ss" + crimeDevidedByStates[i].ID).attr("fill", color(+crimeDevidedByStates[i].Total));
+                    }
+                    
+                    USMap.transition()
+                    .duration(500)
+                    .style("opacity", 1);
+                    
+                    div.transition()
+                    .duration(500)
+                    .style("opacity", 0);
+                    
+                    USMapS.transition()
+                    .duration(600)
+                    .style("opacity", 0);
+                });
+                
+                for (var i = 0; i < crimeDevidedByStates.length; i++){
+                    d3.select("#ss" + crimeDevidedByStates[i].ID).attr("fill", color(+crimeDevidedByStates[i].Total));
+                }
+                
+                for (var i = 0; i < crimeDevidedByStates.length; i++){
+                    d3.select("#s" + crimeDevidedByStates[i].ID).moveToFront();
+                }
+
             }
         </script>
     </body>
