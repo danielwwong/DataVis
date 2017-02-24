@@ -15,6 +15,15 @@
                 border-radius: 8px;
                 pointer-events: none;
             }
+            .axis{
+                fill: none;
+                stroke: black;
+            }
+            .axis text{
+                fill: black;
+                stroke: none;
+                font-size: 12px;
+            }
         </style>
     </head>
     <body>
@@ -23,11 +32,14 @@
         <script src="https://d3js.org/topojson.v1.min.js"></script>
         <script src="https://d3js.org/queue.v1.min.js"></script>
         <script>
-            var USMap, div, USMapS, projection, path, projection2, path2, arc, donutChart, pathForDonut, dataForDonut, donutData, drawDonut, dataForGenderBar, genderBarWidth, genderBar, genderBarYScale;
+            var USMap, div, USMapS, projection, path, projection2, path2, arc, donutChart, pathForDonut, dataForDonut, donutData, drawDonut, dataForGenderBar, genderBarWidth, genderBar, genderBarYScale, genderBarYAxisScale;
+            var barXScale = d3.scale.linear()
+            .domain([0, 100])
+            .range([0, 405]);
             //SVG
             var svg = d3.select("body").append("svg")
             .attr("width", 1272)
-            .attr("height", 530);
+            .attr("height", 560);
             
             projection = d3.geo.albersUsa()
             .translate([636, 250])
@@ -265,9 +277,27 @@
                         });
                     });
                     genderBarYScale = d3.scale.linear()
-                    .domain([0.5, 1.06])
+                    .domain([0.5, 1.1])
                     .range([0, 200]);
-                    
+                    var genderBarXAxis = svg.append("g")
+                    .attr("class", "axis")
+                    .attr("transform", "translate(30, 550)")
+                    .call(d3.svg.axis()
+                        .scale(barXScale)
+                        .orient("bottom")
+                        .ticks(0)
+                    );
+                    genderBarYAxisScale = d3.scale.linear()
+                    .domain([0.5, 1.1])
+                    .range([200, 0]);
+                    var genderBarYAxis = svg.append("g")
+                    .attr("class", "axis")
+                    .attr("transform", "translate(30, 350)")
+                    .call(d3.svg.axis()
+                          .scale(genderBarYAxisScale)
+                          .orient("left")
+                          .ticks(5)
+                    );
                 });
                 
                 for (var i = 0; i < crimeDevidedByStates.length; i++){
