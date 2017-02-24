@@ -125,179 +125,181 @@
                     }
                 })
                 .on("click", function(d, i){
-                    for (var i = 0; i < crimeDevidedByStates.length; i++){
-                        d3.select("#ss" + crimeDevidedByStates[i].ID).moveToFront();
-                        d3.select("#s" + crimeDevidedByStates[i].ID).attr("fill", color(+crimeDevidedByStates[i].Total));
-                    }
-                    
-                    USMap.transition()
-                    .duration(600)
-                    .style("opacity", 0);
-                    
-                    div.transition()
-                    .duration(500)
-                    .style("opacity", 0);
-                    
-                    USMapS.transition()
-                    .duration(500)
-                    .style("opacity", 1);
-                    
-                    d3.select("#ss" + d.id).attr("fill", "orange");
-                    
-                    dataForDonut = [];
-                    for (var i = 0; i < dataset.length; i++){
-                        if (d.id == dataset[i][0]){
-                            dataForDonut[0] = dataset[i][3];
-                            dataForDonut[1] = dataset[i][4];
+                    if (d3.select(this).style("opacity") == 1){
+                        for (var i = 0; i < crimeDevidedByStates.length; i++){
+                            d3.select("#ss" + crimeDevidedByStates[i].ID).moveToFront();
+                            d3.select("#s" + crimeDevidedByStates[i].ID).attr("fill", color(+crimeDevidedByStates[i].Total));
                         }
-                    }
-
-                    //Donut Chart
-                    var donutColor = [];
-                    donutColor[0] = "#d9d9d9";
-                    donutColor[1] = "#fa9fb5";
                     
-                    donutChart = d3.layout.pie()
-                    .sort(null);
-                    donutData = donutChart(dataForDonut);
-                    arc = d3.svg.arc()
-                    .outerRadius(90)
-                    .innerRadius(50);
-                    drawDonut = svg.selectAll("g")
-                    .data(donutData)
-                    .enter()
-                    .append("path")
-                    .attr("d", arc)
-                    .attr("transform", "translate(900, 150)")
-                    .attr("fill", function(d, i){
-                          return donutColor[i];
-                    })
-                    .style("opacity", 0)
-                    .on("mouseover", function(d, i){
-                        d3.select(this).transition()
-                        .duration(200)
-                        .attr("fill", "orange");
-                        
-                        div.transition()
-                        .duration(200)
-                        .style("opacity", 0.8);
-                        
-                        if (i == 0){
-                            div.html("Male<br/>" + dataForDonut[i])
-                            .style("left", (d3.event.pageX) + "px")
-                            .style("top", (d3.event.pageY - 28) + "px");
-                        }
-                        else{
-                            div.html("Female<br/>" + dataForDonut[i])
-                            .style("left", (d3.event.pageX) + "px")
-                            .style("top", (d3.event.pageY - 28) + "px");
-                        }
-                    })
-                    .on("mouseout", function(d, i){
-                        if (i == 0){
-                            d3.select(this).transition()
-                            .duration(500)
-                            .attr("fill", "#d9d9d9");
-                        }
-                        else{
-                            d3.select(this).transition()
-                            .duration(500)
-                            .attr("fill", "#fa9fb5");
-                        }
-                        
+                        USMap.transition()
+                        .duration(600)
+                        .style("opacity", 0);
+                    
                         div.transition()
                         .duration(500)
                         .style("opacity", 0);
-                    });
                     
-                    drawDonut.transition()
-                    .duration(500)
-                    .style("opacity", 1);
-                    drawDonut.moveToFront();
+                        USMapS.transition()
+                        .duration(500)
+                        .style("opacity", 1);
                     
-                    //Gender Ratio Bar
-                    dataForGenderBar = [];
-                    for (var i = 0; i < crimeDevidedByStates.length; i++){
-                        dataForGenderBar[i] = dataset[i][3] / dataset[i][4];
-                    }
+                        d3.select("#ss" + d.id).attr("fill", "orange");
                     
-                    genderBarWidth = 400 / crimeDevidedByStates.length;
-                    genderBar = svg.selectAll("rect")
-                    .data(dataForGenderBar)
-                    .enter()
-                    .append("rect");
+                        dataForDonut = [];
+                        for (var i = 0; i < dataset.length; i++){
+                            if (d.id == dataset[i][0]){
+                                dataForDonut[0] = dataset[i][3];
+                                dataForDonut[1] = dataset[i][4];
+                            }
+                        }
+
+                        //Donut Chart
+                        var donutColor = [];
+                        donutColor[0] = "#d9d9d9";
+                        donutColor[1] = "#fa9fb5";
                     
-                    genderBar.transition()
-                    .duration(500)
-                    .each("start", function(){
-                        d3.select(this)
-                        .attr("y", 550 - 200)
-                        .attr("height", 200)
-                        .attr("fill", "orange");
-                    })
-                    .delay(function(d, i){
-                        return i / dataForGenderBar.length * 500;
-                    })
-                    .attr("x", function(d, i){
-                        return i * genderBarWidth + 30;
-                    })
-                    .attr("width", genderBarWidth - 2)
-                    .attr("id", function(d, i){
-                        return "genderBar" + i;
-                    })
-                    .each("end", function(){
-                        d3.select(this)
-                        .transition()
-                        .duration(300)
-                        .attr("y", function(d){
-                            return 550 - genderBarYScale(d);
-                        })
-                        .attr("height", function(d){
-                            return genderBarYScale(d);
-                        })
-                        .attr("fill", "rgba(0, 0, 255, 0.5)");
-                        d3.select(this)
+                        donutChart = d3.layout.pie()
+                        .sort(null);
+                        donutData = donutChart(dataForDonut);
+                        arc = d3.svg.arc()
+                        .outerRadius(90)
+                        .innerRadius(50);
+                        drawDonut = svg.selectAll("g")
+                        .data(donutData)
+                        .enter()
+                        .append("path")
+                        .attr("d", arc)
+                        .attr("transform", "translate(900, 150)")
+                        .attr("fill", function(d, i){
+                              return donutColor[i];
+                              })
+                        .style("opacity", 0)
                         .on("mouseover", function(d, i){
-                            d3.select(this).attr("fill", "orange");
+                            d3.select(this).transition()
+                            .duration(200)
+                            .attr("fill", "orange");
+                            
                             div.transition()
                             .duration(200)
                             .style("opacity", 0.8);
-
-                            var tip = d3.select(this).attr("id").substr(9);
-                            tip = +tip;
-                            div.html(dataset[tip][5] + "<br/>"  + d)
-                            .style("left", (d3.event.pageX) + "px")
-                            .style("top", (d3.event.pageY - 28) + "px");
+                        
+                            if (i == 0){
+                                div.html("Male<br/>" + dataForDonut[i])
+                                .style("left", (d3.event.pageX) + "px")
+                                .style("top", (d3.event.pageY - 28) + "px");
+                            }
+                            else{
+                                div.html("Female<br/>" + dataForDonut[i])
+                                .style("left", (d3.event.pageX) + "px")
+                                .style("top", (d3.event.pageY - 28) + "px");
+                            }
                         })
-                        .on("mouseout", function(d){
-                            d3.select(this).attr("fill", "rgba(0, 0, 255, 0.5)");
+                        .on("mouseout", function(d, i){
+                            if (i == 0){
+                                d3.select(this).transition()
+                                .duration(500)
+                                .attr("fill", "#d9d9d9");
+                            }
+                            else{
+                                d3.select(this).transition()
+                                .duration(500)
+                                .attr("fill", "#fa9fb5");
+                            }
+                        
                             div.transition()
                             .duration(500)
                             .style("opacity", 0);
                         });
-                    });
-                    genderBarYScale = d3.scale.linear()
-                    .domain([0.5, 1.1])
-                    .range([0, 200]);
-                    var genderBarXAxis = svg.append("g")
-                    .attr("class", "axis")
-                    .attr("transform", "translate(30, 550)")
-                    .call(d3.svg.axis()
-                        .scale(barXScale)
-                        .orient("bottom")
-                        .ticks(0)
-                    );
-                    genderBarYAxisScale = d3.scale.linear()
-                    .domain([0.5, 1.1])
-                    .range([200, 0]);
-                    var genderBarYAxis = svg.append("g")
-                    .attr("class", "axis")
-                    .attr("transform", "translate(30, 350)")
-                    .call(d3.svg.axis()
-                          .scale(genderBarYAxisScale)
-                          .orient("left")
-                          .ticks(5)
-                    );
+                    
+                        drawDonut.transition()
+                        .duration(500)
+                        .style("opacity", 1);
+                        drawDonut.moveToFront();
+                    
+                        //Gender Ratio Bar
+                        dataForGenderBar = [];
+                        for (var i = 0; i < crimeDevidedByStates.length; i++){
+                            dataForGenderBar[i] = dataset[i][3] / dataset[i][4];
+                        }
+                    
+                        genderBarWidth = 400 / crimeDevidedByStates.length;
+                        genderBar = svg.selectAll("rect")
+                        .data(dataForGenderBar)
+                        .enter()
+                        .append("rect");
+                    
+                        genderBar.transition()
+                        .duration(500)
+                        .each("start", function(){
+                              d3.select(this)
+                              .attr("y", 550 - 200)
+                              .attr("height", 200)
+                              .attr("fill", "orange");
+                        })
+                        .delay(function(d, i){
+                               return i / dataForGenderBar.length * 500;
+                        })
+                        .attr("x", function(d, i){
+                              return i * genderBarWidth + 30;
+                              })
+                        .attr("width", genderBarWidth - 2)
+                        .attr("id", function(d, i){
+                              return "genderBar" + i;
+                              })
+                        .each("end", function(){
+                              d3.select(this)
+                              .transition()
+                              .duration(300)
+                              .attr("y", function(d){
+                                    return 550 - genderBarYScale(d);
+                              })
+                              .attr("height", function(d){
+                                    return genderBarYScale(d);
+                              })
+                              .attr("fill", "rgba(0, 0, 255, 0.5)");
+                              d3.select(this)
+                              .on("mouseover", function(d, i){
+                                  d3.select(this).attr("fill", "orange");
+                                  div.transition()
+                                  .duration(200)
+                                  .style("opacity", 0.8);
+
+                                  var tip = d3.select(this).attr("id").substr(9);
+                                  tip = +tip;
+                                  div.html(dataset[tip][5] + "<br/>"  + d)
+                                  .style("left", (d3.event.pageX) + "px")
+                                  .style("top", (d3.event.pageY - 28) + "px");
+                              })
+                              .on("mouseout", function(d){
+                                  d3.select(this).attr("fill", "rgba(0, 0, 255, 0.5)");
+                                  div.transition()
+                                  .duration(500)
+                                  .style("opacity", 0);
+                              });
+                        });
+                        genderBarYScale = d3.scale.linear()
+                        .domain([0.5, 1.1])
+                        .range([0, 200]);
+                        var genderBarXAxis = svg.append("g")
+                        .attr("class", "axis")
+                        .attr("transform", "translate(30, 550)")
+                        .call(d3.svg.axis()
+                              .scale(barXScale)
+                              .orient("bottom")
+                              .ticks(0)
+                        );
+                        genderBarYAxisScale = d3.scale.linear()
+                        .domain([0.5, 1.1])
+                        .range([200, 0]);
+                        var genderBarYAxis = svg.append("g")
+                        .attr("class", "axis")
+                        .attr("transform", "translate(30, 350)")
+                        .call(d3.svg.axis()
+                              .scale(genderBarYAxisScale)
+                              .orient("left")
+                              .ticks(5)
+                        );
+                    }
                 });
                 
                 for (var i = 0; i < crimeDevidedByStates.length; i++){
@@ -353,28 +355,29 @@
                     }
                 })
                 .on("click", function(d){
-                    for (var i = 0; i < crimeDevidedByStates.length; i++){
-                        d3.select("#s" + crimeDevidedByStates[i].ID).moveToFront();
-                        d3.select("#ss" + crimeDevidedByStates[i].ID).attr("fill", color(+crimeDevidedByStates[i].Total));
-                    }
+                    if (d3.select(this).style("opacity") == 1){
+                        for (var i = 0; i < crimeDevidedByStates.length; i++){
+                            d3.select("#s" + crimeDevidedByStates[i].ID).moveToFront();
+                            d3.select("#ss" + crimeDevidedByStates[i].ID).attr("fill", color(+crimeDevidedByStates[i].Total));
+                        }
                     
-                    USMap.transition()
-                    .duration(500)
-                    .style("opacity", 1);
+                        USMap.transition()
+                        .duration(500)
+                        .style("opacity", 1);
                     
-                    div.transition()
-                    .duration(500)
-                    .style("opacity", 0);
+                        div.transition()
+                        .duration(500)
+                        .style("opacity", 0);
                     
-                    USMapS.transition()
-                    .duration(600)
-                    .style("opacity", 0);
+                        USMapS.transition()
+                        .duration(600)
+                        .style("opacity", 0);
                     
-                    drawDonut.transition()
-                    .duration(600)
-                    .style("opacity", 0)
-                    .remove();
-
+                        drawDonut.transition()
+                        .duration(600)
+                        .style("opacity", 0)
+                        .remove();
+                        }
                 });
                 
                 for (var i = 0; i < crimeDevidedByStates.length; i++){
