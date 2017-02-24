@@ -226,16 +226,34 @@
                             d3.select(this)
                             .on("mouseover", function(d, i){
                                 if (d3.select(this).style("opacity") == 1){
+                                    var tip = d3.select(this).attr("id").substr(9);
+                                    tip = +tip;
+                                    for (var i = 0; i < dataset.length; i++){
+                                        if (i != tip){
+                                            d3.select("#genderBar" + i).attr("fill", "rgba(0, 0, 255, 0.5)");
+                                        }
+                                    }
                                     d3.select(this).attr("fill", "orange");
                                     div.transition()
                                     .duration(200)
                                     .style("opacity", 0.8);
-                                
-                                    var tip = d3.select(this).attr("id").substr(9);
-                                    tip = +tip;
                                     div.html(dataset[tip][5] + "<br/>"  + d)
                                     .style("left", (d3.event.pageX) + "px")
                                     .style("top", (d3.event.pageY - 28) + "px");
+                                
+                                    for (var i = 0; i < dataset.length; i++){
+                                        if (smallMapFlag == dataset[i][0]){
+                                            d3.select("#ss" + smallMapFlag).attr("fill", color(+crimeDevidedByStates[i].Total));
+                                        }
+                                    }
+                                
+                                    for (var i = 0; i < dataset.length; i++){
+                                        if (i == tip){
+                                            d3.select("#ss" + crimeDevidedByStates[i].ID).attr("fill", "orange");
+                                        }
+                                    }
+                                
+                                
                                 }
                             })
                             .on("mouseout", function(d){
@@ -244,6 +262,14 @@
                                     div.transition()
                                     .duration(500)
                                     .style("opacity", 0);
+                                    var tip = d3.select(this).attr("id").substr(9);
+                                    tip = +tip;
+                                    for (var i = 0; i < dataset.length; i++){
+                                        if (i == tip){
+                                            d3.select("#ss" + crimeDevidedByStates[i].ID).attr("fill", color(+crimeDevidedByStates[i].Total));
+                                        }
+                                    }
+                                
                                 }
                             });
                         });
