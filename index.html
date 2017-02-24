@@ -32,7 +32,7 @@
         <script src="https://d3js.org/topojson.v1.min.js"></script>
         <script src="https://d3js.org/queue.v1.min.js"></script>
         <script>
-            var USMap, div, USMapS, projection, path, projection2, path2, arc, donutChart, pathForDonut, dataForDonut, donutData, drawDonut, dataForGenderBar, genderBarWidth, genderBar, genderBarYScale, genderBarYAxisScale;
+            var USMap, div, USMapS, projection, path, projection2, path2, arc, donutChart, pathForDonut, dataForDonut, donutData, drawDonut, dataForGenderBar, genderBarWidth, genderBar, genderBarYScale, genderBarYAxisScale, genderBarFlag, smallMapFlag;
             var barXScale = d3.scale.linear()
             .domain([0, 100])
             .range([0, 405]);
@@ -101,6 +101,7 @@
                 var genderBarXAxis = svg.append("g")
                 .attr("class", "axis")
                 .attr("transform", "translate(30, 550)")
+                .style("opacity", 0)
                 .call(d3.svg.axis()
                     .scale(barXScale)
                     .orient("bottom")
@@ -112,6 +113,7 @@
                 var genderBarYAxis = svg.append("g")
                 .attr("class", "axis")
                 .attr("transform", "translate(30, 350)")
+                .style("opacity", 0)
                 .call(d3.svg.axis()
                     .scale(genderBarYAxisScale)
                     .orient("left")
@@ -167,6 +169,12 @@
                             d3.select("#s" + crimeDevidedByStates[i].ID).attr("fill", color(+crimeDevidedByStates[i].Total));
                         }
                     
+                        for (var i = 0; i < dataset.length; i++){
+                            if(d.id == dataset[i][0]){
+                                genderBarFlag = i;
+                            }
+                        }
+                    
                         USMap.transition()
                         .duration(600)
                         .style("opacity", 0);
@@ -207,7 +215,14 @@
                             .attr("height", function(d){
                                 return genderBarYScale(d);
                             })
-                            .attr("fill", "rgba(0, 0, 255, 0.5)");
+                            .attr("fill", function(d){
+                                if (d3.select(this).attr("id").substr(9) != genderBarFlag){
+                                    return "rgba(0, 0, 255, 0.5)";
+                                }
+                                else{
+                                    return "orange";
+                                }
+                            });
                             d3.select(this)
                             .on("mouseover", function(d, i){
                                 if (d3.select(this).style("opacity") == 1){
@@ -245,6 +260,7 @@
                         genderBar.moveToFront();
                     
                         d3.select("#ss" + d.id).attr("fill", "orange");
+                        smallMapFlag = d.id;
                     
                         dataForDonut = [];
                         for (var i = 0; i < dataset.length; i++){
@@ -358,6 +374,20 @@
                                 .style("left", (d3.event.pageX) + "px")
                                 .style("top", (d3.event.pageY - 28) + "px");
                                 colorFlag = dataset[i][2];
+                                genderBarFlag = i;
+                            }
+                        }
+                        for (var i = 0; i < dataset.length; i++){
+                            if (i != genderBarFlag){
+                                d3.select("#genderBar" + i).attr("fill", "rgba(0, 0, 255, 0.5)");
+                            }
+                            else{
+                                d3.select("#genderBar" + i).attr("fill", "orange");
+                            }
+                        }
+                        for (var i = 0; i < dataset.length; i++){
+                            if (smallMapFlag == dataset[i][0]){
+                                d3.select("#ss" + smallMapFlag).attr("fill", color(+crimeDevidedByStates[i].Total));
                             }
                         }
                     }
@@ -371,6 +401,11 @@
                         div.transition()
                         .duration(500)
                         .style("opacity", 0);
+                    
+                        for (var i = 0; i < dataset.length; i++){
+                            d3.select("#genderBar" + i).attr("fill", "rgba(0, 0, 255, 0.5)");
+                        }
+                    
                     }
                 })
                 .on("click", function(d){
