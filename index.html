@@ -55,9 +55,10 @@
             queue()
             .defer(d3.json, "Data/states.json")
             .defer(d3.csv, "Data/crimeDevidedByStates.csv")
+            .defer(d3.csv, "Data/schoolType.csv")
             .await(mapping);
             
-            function mapping(error, states, crimeDevidedByStates){
+            function mapping(error, states, crimeDevidedByStates, schoolType){
                 if (error){
                     console.log(error);
                 }
@@ -81,6 +82,15 @@
                     dataset[i][4] = +crimeDevidedByStates[i].Female;
                     dataset[i][5] = crimeDevidedByStates[i].StateFull;
                     dataset[i][6] = +crimeDevidedByStates[i].InstitutionNumber;
+                    dataset[i][7] = +schoolType[i].PrivateNonProfit4YM;
+                    dataset[i][8] = +schoolType[i].Public2Y;
+                    dataset[i][9] = +schoolType[i].Public4YM;
+                    dataset[i][10] = +schoolType[i].PrivateForProfit4YM;
+                    dataset[i][11] = +schoolType[i].PrivateNonProfit2Y;
+                    dataset[i][12] = +schoolType[i].PrivateForProfit2Y;
+                    dataset[i][13] = +schoolType[i].Public2YL;
+                    dataset[i][14] = +schoolType[i].PrivateForProfit2YL;
+                    dataset[i][15] = +schoolType[i].PrivateNonProfit2YL;
                 }
                 
                 d3.selection.prototype.moveToFront = function(){
@@ -91,12 +101,13 @@
                 
                 //Donut Chart
                 originalDataForDonut = [];
-                originalDataForDonut[0] = 1;
-                originalDataForDonut[1] = 1;
+                for (var i = 0; i < 9; i++){
+                    originalDataForDonut[i] = 1;
+                }
                 
-                var donutColor = [];
-                donutColor[0] = "#d9d9d9";
-                donutColor[1] = "#fa9fb5";
+                var donutColor = ["#fbb4ae", "#b3cde3", "#ccebc5", "#decbe4", "#fed9a6", "#ffffcc", "#e5d8bd", "#fddaec", "#f2f2f2"];
+                
+                var schoolTypeName = ["Private Non-Profit 4Y+", "Public 2Y", "Public 4Y+", "Private For-Profit 4Y+", "Private Non-Profit 2Y", "Private For Profit 2Y", "Public 2Y-", "Private For-Profit 2Y-", "Privat Non-Profti 2Y-"];
                 
                 donutChart = d3.layout.pie()
                 .sort(null);
@@ -124,31 +135,17 @@
                         .duration(200)
                         .style("opacity", 0.8);
                     
-                        if (i == 0){
-                            div.html("Male<br/>" + dataForDonut[i])
-                            .style("left", (d3.event.pageX) + "px")
-                            .style("top", (d3.event.pageY - 28) + "px");
-                        }
-                        else{
-                            div.html("Female<br/>" + dataForDonut[i])
-                            .style("left", (d3.event.pageX) + "px")
-                            .style("top", (d3.event.pageY - 28) + "px");
-                        }
+                        div.html(schoolTypeName[i] + "<br/>" + dataForDonut[i] + " Institutions")
+                        .style("left", (d3.event.pageX) + "px")
+                        .style("top", (d3.event.pageY - 28) + "px");
                     }
                 })
                 .on("mouseout", function(d, i){
                     if (d3.select(this).style("opacity") == 1){
-                        if (i == 0){
-                            d3.select(this).transition()
-                            .duration(500)
-                            .attr("fill", "#d9d9d9");
-                        }
-                        else{
-                            d3.select(this).transition()
-                            .duration(500)
-                            .attr("fill", "#fa9fb5");
-                        }
-                        
+                        d3.select(this).transition()
+                        .duration(500)
+                        .attr("fill", donutColor[i]);
+                    
                         div.transition()
                         .duration(500)
                         .style("opacity", 0);
@@ -320,8 +317,15 @@
                     
                         for (var i = 0; i < dataset.length; i++){
                             if(d.id == dataset[i][0]){
-                                dataForDonut[0] = dataset[i][3];
-                                dataForDonut[1] = dataset[i][4];
+                                dataForDonut[0] = dataset[i][7];
+                                dataForDonut[1] = dataset[i][8];
+                                dataForDonut[2] = dataset[i][9];
+                                dataForDonut[3] = dataset[i][10];
+                                dataForDonut[4] = dataset[i][11];
+                                dataForDonut[5] = dataset[i][12];
+                                dataForDonut[6] = dataset[i][13];
+                                dataForDonut[7] = dataset[i][14];
+                                dataForDonut[8] = dataset[i][15];
                                 genderBarFlag = i;
                                 crimeBarFlag = i;
                                 institutionBarFlag = i;
@@ -413,8 +417,15 @@
                                             d3.select("#ss" + crimeDevidedByStates[i].ID).attr("fill", "orange");
                                             d3.select("#crimeBar" + i).attr("fill", "orange");
                                             d3.select("#institutionBar" + i).attr("fill", "orange");
-                                            dataForDonut[0] = dataset[i][3];
-                                            dataForDonut[1] = dataset[i][4];
+                                            dataForDonut[0] = dataset[i][7];
+                                            dataForDonut[1] = dataset[i][8];
+                                            dataForDonut[2] = dataset[i][9];
+                                            dataForDonut[3] = dataset[i][10];
+                                            dataForDonut[4] = dataset[i][11];
+                                            dataForDonut[5] = dataset[i][12];
+                                            dataForDonut[6] = dataset[i][13];
+                                            dataForDonut[7] = dataset[i][14];
+                                            dataForDonut[8] = dataset[i][15];
                                         }
                                     }
                                 
@@ -511,8 +522,15 @@
                                             d3.select("#ss" + crimeDevidedByStates[i].ID).attr("fill", "orange");
                                             d3.select("#genderBar" + i).attr("fill", "orange");
                                             d3.select("#institutionBar" + i).attr("fill", "orange");
-                                            dataForDonut[0] = dataset[i][3];
-                                            dataForDonut[1] = dataset[i][4];
+                                            dataForDonut[0] = dataset[i][7];
+                                            dataForDonut[1] = dataset[i][8];
+                                            dataForDonut[2] = dataset[i][9];
+                                            dataForDonut[3] = dataset[i][10];
+                                            dataForDonut[4] = dataset[i][11];
+                                            dataForDonut[5] = dataset[i][12];
+                                            dataForDonut[6] = dataset[i][13];
+                                            dataForDonut[7] = dataset[i][14];
+                                            dataForDonut[8] = dataset[i][15];
                                         }
                                     }
                                 
@@ -608,8 +626,15 @@
                                             d3.select("#ss" + crimeDevidedByStates[i].ID).attr("fill", "orange");
                                             d3.select("#genderBar" + i).attr("fill", "orange");
                                             d3.select("#crimeBar" + i).attr("fill", "orange");
-                                            dataForDonut[0] = dataset[i][3];
-                                            dataForDonut[1] = dataset[i][4];
+                                            dataForDonut[0] = dataset[i][7];
+                                            dataForDonut[1] = dataset[i][8];
+                                            dataForDonut[2] = dataset[i][9];
+                                            dataForDonut[3] = dataset[i][10];
+                                            dataForDonut[4] = dataset[i][11];
+                                            dataForDonut[5] = dataset[i][12];
+                                            dataForDonut[6] = dataset[i][13];
+                                            dataForDonut[7] = dataset[i][14];
+                                            dataForDonut[8] = dataset[i][15];
                                         }
                                     }
                                 
@@ -721,8 +746,15 @@
                                 .style("left", (d3.event.pageX) + "px")
                                 .style("top", (d3.event.pageY - 28) + "px");
                                 colorFlag = dataset[i][2];
-                                dataForDonut[0] = dataset[i][3];
-                                dataForDonut[1] = dataset[i][4];
+                                dataForDonut[0] = dataset[i][7];
+                                dataForDonut[1] = dataset[i][8];
+                                dataForDonut[2] = dataset[i][9];
+                                dataForDonut[3] = dataset[i][10];
+                                dataForDonut[4] = dataset[i][11];
+                                dataForDonut[5] = dataset[i][12];
+                                dataForDonut[6] = dataset[i][13];
+                                dataForDonut[7] = dataset[i][14];
+                                dataForDonut[8] = dataset[i][15];
                                 genderBarFlag = i;
                             }
                         }
