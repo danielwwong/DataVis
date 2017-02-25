@@ -32,7 +32,7 @@
         <script src="https://d3js.org/topojson.v1.min.js"></script>
         <script src="https://d3js.org/queue.v1.min.js"></script>
         <script>
-            var USMap, div, USMapS, projection, path, projection2, path2, arc, donutChart, pathForDonut, dataForDonut, donutData, drawDonut, dataForGenderBar, genderBarWidth, genderBar, genderBarYScale, genderBarYAxisScale, genderBarFlag, smallMapFlag, dataForCrimeBar, crimeBarWidth, crimeBar, crimeBarYScale, crimeBarYAxisScale, crimeBarFlag;
+            var USMap, div, USMapS, projection, path, projection2, path2, arc, donutChart, pathForDonut, dataForDonut, donutData, drawDonut, dataForGenderBar, genderBarWidth, genderBar, genderBarYScale, genderBarYAxisScale, genderBarFlag, smallMapFlag, dataForCrimeBar, crimeBarWidth, crimeBar, crimeBarYScale, crimeBarYAxisScale, crimeBarFlag, dataForInstitutionBar, institutionBarWidth, institutionBar, institutionBarYScale, institutionBarYAxisScale, institutionBarFlag;
             var barXScale = d3.scale.linear()
             .domain([0, 100])
             .range([0, 405]);
@@ -79,6 +79,7 @@
                     dataset[i][3] = +crimeDevidedByStates[i].Male;
                     dataset[i][4] = +crimeDevidedByStates[i].Female;
                     dataset[i][5] = crimeDevidedByStates[i].StateFull;
+                    dataset[i][6] = +crimeDevidedByStates[i].InstitutionNumber;
                 }
                 
                 d3.selection.prototype.moveToFront = function(){
@@ -163,6 +164,44 @@
                     .ticks(5)
                 );
                 
+                //Institution Number Bar
+                dataForInstitutionBar = [];
+                for (var i = 0; i < crimeDevidedByStates.length; i++){
+                    dataForInstitutionBar[i] = dataset[i][6];
+                }
+                
+                institutionBarWidth = 400 / crimeDevidedByStates.length;
+                institutionBar = svg.selectAll(".chart-group")
+                .selectAll(".bar")
+                .data(dataForInstitutionBar)
+                .enter()
+                .append("rect");
+                
+                institutionBarYScale = d3.scale.linear()
+                .domain([0, 160])
+                .range([0, 200]);
+                var institutionBarXAxis = svg.append("g")
+                .attr("class", "axis")
+                .attr("transform", "translate(1028, 550)")
+                .style("opacity", 0)
+                .call(d3.svg.axis()
+                    .scale(barXScale)
+                    .orient("bottom")
+                    .ticks(0)
+                );
+                institutionBarYAxisScale = d3.scale.linear()
+                .domain([0, 160])
+                .range([200, 0]);
+                var institutionBarYAxis = svg.append("g")
+                .attr("class", "axis")
+                .attr("transform", "translate(1028, 350)")
+                .style("opacity", 0)
+                .call(d3.svg.axis()
+                    .scale(institutionBarYAxisScale)
+                    .orient("left")
+                    .ticks(5)
+                );
+                
                 // Big U.S. Map
                 USMap = svg.selectAll("pathUS")
                 .data(states.features)
@@ -216,6 +255,7 @@
                             if(d.id == dataset[i][0]){
                                 genderBarFlag = i;
                                 crimeBarFlag = i;
+                                institutionBarFlag = i;
                             }
                         }
                     
@@ -290,6 +330,7 @@
                                         if (smallMapFlag == dataset[i][0]){
                                             d3.select("#ss" + smallMapFlag).attr("fill", color(+crimeDevidedByStates[i].Total));
                                             d3.select("#crimeBar" + i).attr("fill", "rgba(0, 0, 255, 0.5)");
+                                            d3.select("#institutionBar" + i).attr("fill", "rgba(0, 0, 255, 0.5)");
                                         }
                                     }
                                 
@@ -297,6 +338,7 @@
                                         if (i == tip){
                                             d3.select("#ss" + crimeDevidedByStates[i].ID).attr("fill", "orange");
                                             d3.select("#crimeBar" + i).attr("fill", "orange");
+                                            d3.select("#institutionBar" + i).attr("fill", "orange");
                                         }
                                     }
                                 
@@ -315,6 +357,7 @@
                                         if (i == tip){
                                             d3.select("#ss" + crimeDevidedByStates[i].ID).attr("fill", color(+crimeDevidedByStates[i].Total));
                                             d3.select("#crimeBar" + i).attr("fill", "rgba(0, 0, 255, 0.5)");
+                                            d3.select("#institutionBar" + i).attr("fill", "rgba(0, 0, 255, 0.5)");
                                         }
                                     }
                                 
@@ -381,6 +424,7 @@
                                         if (smallMapFlag == dataset[i][0]){
                                             d3.select("#ss" + smallMapFlag).attr("fill", color(+crimeDevidedByStates[i].Total));
                                             d3.select("#genderBar" + i).attr("fill", "rgba(0, 0, 255, 0.5)");
+                                            d3.select("#institutionBar" + i).attr("fill", "rgba(0, 0, 255, 0.5)");
                                         }
                                     }
                                 
@@ -388,6 +432,7 @@
                                         if (i == tip){
                                             d3.select("#ss" + crimeDevidedByStates[i].ID).attr("fill", "orange");
                                             d3.select("#genderBar" + i).attr("fill", "orange");
+                                            d3.select("#institutionBar" + i).attr("fill", "orange");
                                         }
                                     }
                                 }
@@ -404,12 +449,105 @@
                                         if (i == tip){
                                             d3.select("#ss" + crimeDevidedByStates[i].ID).attr("fill", color(+crimeDevidedByStates[i].Total));
                                             d3.select("#genderBar" + i).attr("fill", "rgba(0, 0, 255, 0.5)");
+                                            d3.select("#institutionBar" + i).attr("fill", "rgba(0, 0, 255, 0.5)");
                                         }
                                     }
                                 }
                             });
                         });
-                        
+                    
+                        //Institution Bar
+                        institutionBar.transition()
+                        .duration(500)
+                        .each("start", function(){
+                            d3.select(this)
+                            .attr("y", 550 - 200)
+                            .attr("height", 200)
+                            .attr("fill", "orange");
+                        })
+                        .delay(function(d, i){
+                            return i / dataForInstitutionBar.length * 500;
+                        })
+                        .attr("x", function(d, i){
+                            return i * institutionBarWidth + 1030;
+                        })
+                        .attr("width", institutionBarWidth - 2)
+                        .attr("id", function(d, i){
+                            return "institutionBar" + i;
+                        })
+                        .each("end", function(){
+                            d3.select(this)
+                            .transition()
+                            .duration(300)
+                            .attr("y", function(d){
+                                return 550 - institutionBarYScale(d);
+                            })
+                            .attr("height", function(d){
+                                return institutionBarYScale(d);
+                            })
+                            .attr("fill", function(d){
+                                if (d3.select(this).attr("id").substr(14) != institutionBarFlag){
+                                    return "rgba(0, 0, 255, 0.5)";
+                                }
+                                else{
+                                    return "orange";
+                                }
+                            });
+                            d3.select(this)
+                            .on("mouseover", function(d, i){
+                                if (d3.select(this).style("opacity") == 1){
+                                    var tip = d3.select(this).attr("id").substr(14);
+                                    tip = +tip;
+                                    for (var i = 0; i < dataset.length; i++){
+                                        if (i != tip){
+                                            d3.select("#institutionBar" + i).attr("fill", "rgba(0, 0, 255, 0.5)");
+                                        }
+                                    }
+                                    d3.select(this).attr("fill", "orange");
+                                    div.transition()
+                                    .duration(200)
+                                    .style("opacity", 0.8);
+                                    div.html(dataset[tip][5] + "<br/>"  + d + " Institutions")
+                                    .style("left", (d3.event.pageX) + "px")
+                                    .style("top", (d3.event.pageY - 28) + "px");
+                                
+                                    for (var i = 0; i < dataset.length; i++){
+                                        if (smallMapFlag == dataset[i][0]){
+                                            d3.select("#ss" + smallMapFlag).attr("fill", color(+crimeDevidedByStates[i].Total));
+                                            d3.select("#genderBar" + i).attr("fill", "rgba(0, 0, 255, 0.5)");
+                                            d3.select("#crimeBar" + i).attr("fill", "rgba(0, 0, 255, 0.5)");
+                                        }
+                                    }
+                                
+                                    for (var i = 0; i < dataset.length; i++){
+                                        if (i == tip){
+                                            d3.select("#ss" + crimeDevidedByStates[i].ID).attr("fill", "orange");
+                                            d3.select("#genderBar" + i).attr("fill", "orange");
+                                            d3.select("#crimeBar" + i).attr("fill", "orange");
+                                        }
+                                    }
+                                }
+                            })
+                            .on("mouseout", function(d){
+                                if (d3.select(this).style("opacity") == 1){
+                                    d3.select(this).attr("fill", "rgba(0, 0, 255, 0.5)");
+                                    div.transition()
+                                    .duration(500)
+                                    .style("opacity", 0);
+                                    var tip = d3.select(this).attr("id").substr(14);
+                                    tip = +tip;
+                                    for (var i = 0; i < dataset.length; i++){
+                                        if (i == tip){
+                                            d3.select("#ss" + crimeDevidedByStates[i].ID).attr("fill", color(+crimeDevidedByStates[i].Total));
+                                            d3.select("#genderBar" + i).attr("fill", "rgba(0, 0, 255, 0.5)");
+                                            d3.select("#crimeBar" + i).attr("fill", "rgba(0, 0, 255, 0.5)");
+                                        }
+                                    }
+                                }
+                            });
+                        });
+
+                    
                         //Bar Opacity
                         genderBarXAxis.transition()
                         .duration(500)
@@ -432,6 +570,17 @@
                         crimeBarXAxis.moveToFront();
                         crimeBarYAxis.moveToFront();
                         crimeBar.moveToFront();
+                    
+                        institutionBarXAxis.transition()
+                        .duration(500)
+                        .style("opacity", 1);
+                        institutionBarYAxis.transition()
+                        .duration(500)
+                        .style("opacity", 1);
+                        institutionBar.style("opacity", 1);
+                        institutionBarXAxis.moveToFront();
+                        institutionBarYAxis.moveToFront();
+                        institutionBar.moveToFront();
                     
                         d3.select("#ss" + d.id).attr("fill", "orange");
                         smallMapFlag = d.id;
@@ -555,10 +704,12 @@
                             if (i != genderBarFlag){
                                 d3.select("#genderBar" + i).attr("fill", "rgba(0, 0, 255, 0.5)");
                                 d3.select("#crimeBar" + i).attr("fill", "rgba(0, 0, 255, 0.5)");
+                                d3.select("#institutionBar" + i).attr("fill", "rgba(0, 0, 255, 0.5)");
                             }
                             else{
                                 d3.select("#genderBar" + i).attr("fill", "orange");
                                 d3.select("#crimeBar" + i).attr("fill", "orange");
+                                d3.select("#institutionBar" + i).attr("fill", "orange");
                             }
                         }
                         for (var i = 0; i < dataset.length; i++){
@@ -581,6 +732,7 @@
                         for (var i = 0; i < dataset.length; i++){
                             d3.select("#genderBar" + i).attr("fill", "rgba(0, 0, 255, 0.5)");
                             d3.select("#crimeBar" + i).attr("fill", "rgba(0, 0, 255, 0.5)");
+                            d3.select("#institutionBar" + i).attr("fill", "rgba(0, 0, 255, 0.5)");
                         }
                     
                     }
@@ -625,6 +777,18 @@
                         .style("opacity", 0);
                     
                         crimeBarYAxis.transition()
+                        .duration(600)
+                        .style("opacity", 0);
+                    
+                        institutionBar.transition()
+                        .duration(600)
+                        .style("opacity", 0);
+                    
+                        institutionBarXAxis.transition()
+                        .duration(600)
+                        .style("opacity", 0);
+                    
+                        institutionBarYAxis.transition()
                         .duration(600)
                         .style("opacity", 0);
                     
