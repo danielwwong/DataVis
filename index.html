@@ -32,7 +32,8 @@
         <script src="https://d3js.org/topojson.v1.min.js"></script>
         <script src="https://d3js.org/queue.v1.min.js"></script>
         <script>
-            var USMap, div, USMapS, projection, path, projection2, path2, arc, donutChart, pathForDonut, dataForDonut, donutData, drawDonut, dataForGenderBar, genderBarWidth, genderBar, genderBarYScale, genderBarYAxisScale, genderBarFlag, smallMapFlag, dataForCrimeBar, crimeBarWidth, crimeBar, crimeBarYScale, crimeBarYAxisScale, crimeBarFlag, dataForInstitutionBar, institutionBarWidth, institutionBar, institutionBarYScale, institutionBarYAxisScale, institutionBarFlag;
+            var USMap, div, USMapS, projection, path, projection2, path2, arc, donutChart, pathForDonut, originalDataForDonut, dataForDonut, donutData, drawDonut, dataForGenderBar, genderBarWidth, genderBar, genderBarYScale, genderBarYAxisScale, genderBarFlag, smallMapFlag, dataForCrimeBar, crimeBarWidth, crimeBar, crimeBarYScale, crimeBarYAxisScale, crimeBarFlag, dataForInstitutionBar, institutionBarWidth, institutionBar, institutionBarYScale, institutionBarYAxisScale, institutionBarFlag;
+            var dataForDonut = [];
             var barXScale = d3.scale.linear()
             .domain([0, 100])
             .range([0, 352]);
@@ -87,6 +88,72 @@
                         this.parentNode.appendChild(this);
                     });
                 };
+                
+                //Donut Chart
+                originalDataForDonut = [];
+                originalDataForDonut[0] = 1;
+                originalDataForDonut[1] = 1;
+                
+                var donutColor = [];
+                donutColor[0] = "#d9d9d9";
+                donutColor[1] = "#fa9fb5";
+                
+                donutChart = d3.layout.pie()
+                .sort(null);
+                donutData = donutChart(originalDataForDonut);
+                arc = d3.svg.arc()
+                .outerRadius(90)
+                .innerRadius(50);
+                drawDonut = svg.selectAll(".donut")
+                .data(donutData)
+                .enter()
+                .append("path")
+                .attr("d", arc)
+                .attr("transform", "translate(900, 150)")
+                .attr("fill", function(d, i){
+                      return donutColor[i];
+                })
+                .style("opacity", 0)
+                .on("mouseover", function(d, i){
+                    if (d3.select(this).style("opacity") == 1){
+                        d3.select(this).transition()
+                        .duration(200)
+                        .attr("fill", "orange");
+                    
+                        div.transition()
+                        .duration(200)
+                        .style("opacity", 0.8);
+                    
+                        if (i == 0){
+                            div.html("Male<br/>" + dataForDonut[i])
+                            .style("left", (d3.event.pageX) + "px")
+                            .style("top", (d3.event.pageY - 28) + "px");
+                        }
+                        else{
+                            div.html("Female<br/>" + dataForDonut[i])
+                            .style("left", (d3.event.pageX) + "px")
+                            .style("top", (d3.event.pageY - 28) + "px");
+                        }
+                    }
+                })
+                .on("mouseout", function(d, i){
+                    if (d3.select(this).style("opacity") == 1){
+                        if (i == 0){
+                            d3.select(this).transition()
+                            .duration(500)
+                            .attr("fill", "#d9d9d9");
+                        }
+                        else{
+                            d3.select(this).transition()
+                            .duration(500)
+                            .attr("fill", "#fa9fb5");
+                        }
+                        
+                        div.transition()
+                        .duration(500)
+                        .style("opacity", 0);
+                    }
+                });
                 
                 //Gender Ratio Bar
                 dataForGenderBar = [];
@@ -253,6 +320,8 @@
                     
                         for (var i = 0; i < dataset.length; i++){
                             if(d.id == dataset[i][0]){
+                                dataForDonut[0] = dataset[i][3];
+                                dataForDonut[1] = dataset[i][4];
                                 genderBarFlag = i;
                                 crimeBarFlag = i;
                                 institutionBarFlag = i;
@@ -270,6 +339,11 @@
                         USMapS.transition()
                         .duration(500)
                         .style("opacity", 1);
+                    
+                        //Donut Chart
+                        donutData = donutChart(dataForDonut);
+                        drawDonut.data(donutData)
+                        .attr("d", arc);
                     
                         //Gender Ratio Bar
                         genderBar.transition()
@@ -339,10 +413,14 @@
                                             d3.select("#ss" + crimeDevidedByStates[i].ID).attr("fill", "orange");
                                             d3.select("#crimeBar" + i).attr("fill", "orange");
                                             d3.select("#institutionBar" + i).attr("fill", "orange");
+                                            dataForDonut[0] = dataset[i][3];
+                                            dataForDonut[1] = dataset[i][4];
                                         }
                                     }
                                 
-                                
+                                    donutData = donutChart(dataForDonut);
+                                    drawDonut.data(donutData)
+                                    .attr("d", arc);
                                 }
                             })
                             .on("mouseout", function(d){
@@ -433,8 +511,14 @@
                                             d3.select("#ss" + crimeDevidedByStates[i].ID).attr("fill", "orange");
                                             d3.select("#genderBar" + i).attr("fill", "orange");
                                             d3.select("#institutionBar" + i).attr("fill", "orange");
+                                            dataForDonut[0] = dataset[i][3];
+                                            dataForDonut[1] = dataset[i][4];
                                         }
                                     }
+                                
+                                    donutData = donutChart(dataForDonut);
+                                    drawDonut.data(donutData)
+                                    .attr("d", arc);
                                 }
                             })
                             .on("mouseout", function(d){
@@ -524,8 +608,14 @@
                                             d3.select("#ss" + crimeDevidedByStates[i].ID).attr("fill", "orange");
                                             d3.select("#genderBar" + i).attr("fill", "orange");
                                             d3.select("#crimeBar" + i).attr("fill", "orange");
+                                            dataForDonut[0] = dataset[i][3];
+                                            dataForDonut[1] = dataset[i][4];
                                         }
                                     }
+                                
+                                    donutData = donutChart(dataForDonut);
+                                    drawDonut.data(donutData)
+                                    .attr("d", arc);
                                 }
                             })
                             .on("mouseout", function(d){
@@ -548,7 +638,7 @@
                         });
 
                     
-                        //Bar Opacity
+                        //Opacity
                         genderBarXAxis.transition()
                         .duration(500)
                         .style("opacity", 1);
@@ -582,79 +672,13 @@
                         institutionBarYAxis.moveToFront();
                         institutionBar.moveToFront();
                     
-                        d3.select("#ss" + d.id).attr("fill", "orange");
-                        smallMapFlag = d.id;
-                    
-                        dataForDonut = [];
-                        for (var i = 0; i < dataset.length; i++){
-                            if (d.id == dataset[i][0]){
-                                dataForDonut[0] = dataset[i][3];
-                                dataForDonut[1] = dataset[i][4];
-                            }
-                        }
-
-                        //Donut Chart
-                        var donutColor = [];
-                        donutColor[0] = "#d9d9d9";
-                        donutColor[1] = "#fa9fb5";
-                    
-                        donutChart = d3.layout.pie()
-                        .sort(null);
-                        donutData = donutChart(dataForDonut);
-                        arc = d3.svg.arc()
-                        .outerRadius(90)
-                        .innerRadius(50);
-                        drawDonut = svg.selectAll("g")
-                        .data(donutData)
-                        .enter()
-                        .append("path")
-                        .attr("d", arc)
-                        .attr("transform", "translate(900, 150)")
-                        .attr("fill", function(d, i){
-                              return donutColor[i];
-                              })
-                        .style("opacity", 0)
-                        .on("mouseover", function(d, i){
-                            d3.select(this).transition()
-                            .duration(200)
-                            .attr("fill", "orange");
-                            
-                            div.transition()
-                            .duration(200)
-                            .style("opacity", 0.8);
-                        
-                            if (i == 0){
-                                div.html("Male<br/>" + dataForDonut[i])
-                                .style("left", (d3.event.pageX) + "px")
-                                .style("top", (d3.event.pageY - 28) + "px");
-                            }
-                            else{
-                                div.html("Female<br/>" + dataForDonut[i])
-                                .style("left", (d3.event.pageX) + "px")
-                                .style("top", (d3.event.pageY - 28) + "px");
-                            }
-                        })
-                        .on("mouseout", function(d, i){
-                            if (i == 0){
-                                d3.select(this).transition()
-                                .duration(500)
-                                .attr("fill", "#d9d9d9");
-                            }
-                            else{
-                                d3.select(this).transition()
-                                .duration(500)
-                                .attr("fill", "#fa9fb5");
-                            }
-                        
-                            div.transition()
-                            .duration(500)
-                            .style("opacity", 0);
-                        });
-                    
                         drawDonut.transition()
                         .duration(500)
                         .style("opacity", 1);
                         drawDonut.moveToFront();
+                    
+                        d3.select("#ss" + d.id).attr("fill", "orange");
+                        smallMapFlag = d.id;
                     
                     }
                 });
@@ -697,6 +721,8 @@
                                 .style("left", (d3.event.pageX) + "px")
                                 .style("top", (d3.event.pageY - 28) + "px");
                                 colorFlag = dataset[i][2];
+                                dataForDonut[0] = dataset[i][3];
+                                dataForDonut[1] = dataset[i][4];
                                 genderBarFlag = i;
                             }
                         }
@@ -717,6 +743,10 @@
                                 d3.select("#ss" + smallMapFlag).attr("fill", color(+crimeDevidedByStates[i].Total));
                             }
                         }
+                    
+                        donutData = donutChart(dataForDonut);
+                        drawDonut.data(donutData)
+                        .attr("d", arc);
                     }
                 })
                 .on("mouseout", function(d){
@@ -794,8 +824,7 @@
                     
                         drawDonut.transition()
                         .duration(600)
-                        .style("opacity", 0)
-                        .remove();
+                        .style("opacity", 0);
                     
                     }
                 });
