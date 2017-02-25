@@ -35,7 +35,7 @@
             var USMap, div, USMapS, projection, path, projection2, path2, arc, donutChart, pathForDonut, dataForDonut, donutData, drawDonut, dataForGenderBar, genderBarWidth, genderBar, genderBarYScale, genderBarYAxisScale, genderBarFlag, smallMapFlag, dataForCrimeBar, crimeBarWidth, crimeBar, crimeBarYScale, crimeBarYAxisScale, crimeBarFlag, dataForInstitutionBar, institutionBarWidth, institutionBar, institutionBarYScale, institutionBarYAxisScale, institutionBarFlag;
             var barXScale = d3.scale.linear()
             .domain([0, 100])
-            .range([0, 405]);
+            .range([0, 352]);
             //SVG
             var svg = d3.select("body").append("svg")
             .classed("chart", true)
@@ -94,7 +94,7 @@
                     dataForGenderBar[i] = dataset[i][3] / dataset[i][4];
                 }
                 
-                genderBarWidth = 400 / crimeDevidedByStates.length;
+                genderBarWidth = 350 / crimeDevidedByStates.length;
                 genderBar = svg.selectAll(".chart-group")
                 .selectAll(".bar")
                 .data(dataForGenderBar)
@@ -132,7 +132,7 @@
                     dataForCrimeBar[i] = dataset[i][2];
                 }
                 
-                crimeBarWidth = 400 / crimeDevidedByStates.length;
+                crimeBarWidth = 350 / crimeDevidedByStates.length;
                 crimeBar = svg.selectAll(".chart-group")
                 .selectAll(".bar")
                 .data(dataForCrimeBar)
@@ -144,7 +144,7 @@
                 .range([0, 200]);
                 var crimeBarXAxis = svg.append("g")
                 .attr("class", "axis")
-                .attr("transform", "translate(528, 550)")
+                .attr("transform", "translate(461, 550)")
                 .style("opacity", 0)
                 .call(d3.svg.axis()
                     .scale(barXScale)
@@ -156,7 +156,7 @@
                 .range([200, 0]);
                 var crimeBarYAxis = svg.append("g")
                 .attr("class", "axis")
-                .attr("transform", "translate(528, 350)")
+                .attr("transform", "translate(461, 350)")
                 .style("opacity", 0)
                 .call(d3.svg.axis()
                     .scale(crimeBarYAxisScale)
@@ -170,7 +170,7 @@
                     dataForInstitutionBar[i] = dataset[i][6];
                 }
                 
-                institutionBarWidth = 400 / crimeDevidedByStates.length;
+                institutionBarWidth = 350 / crimeDevidedByStates.length;
                 institutionBar = svg.selectAll(".chart-group")
                 .selectAll(".bar")
                 .data(dataForInstitutionBar)
@@ -182,7 +182,7 @@
                 .range([0, 200]);
                 var institutionBarXAxis = svg.append("g")
                 .attr("class", "axis")
-                .attr("transform", "translate(1028, 550)")
+                .attr("transform", "translate(894, 550)")
                 .style("opacity", 0)
                 .call(d3.svg.axis()
                     .scale(barXScale)
@@ -194,7 +194,7 @@
                 .range([200, 0]);
                 var institutionBarYAxis = svg.append("g")
                 .attr("class", "axis")
-                .attr("transform", "translate(1028, 350)")
+                .attr("transform", "translate(894, 350)")
                 .style("opacity", 0)
                 .call(d3.svg.axis()
                     .scale(institutionBarYAxisScale)
@@ -378,7 +378,7 @@
                             return i / dataForCrimeBar.length * 500;
                         })
                         .attr("x", function(d, i){
-                            return i * crimeBarWidth + 530;
+                            return i * crimeBarWidth + 463;
                         })
                         .attr("width", crimeBarWidth - 2)
                         .attr("id", function(d, i){
@@ -469,7 +469,7 @@
                             return i / dataForInstitutionBar.length * 500;
                         })
                         .attr("x", function(d, i){
-                            return i * institutionBarWidth + 1030;
+                            return i * institutionBarWidth + 896;
                         })
                         .attr("width", institutionBarWidth - 2)
                         .attr("id", function(d, i){
