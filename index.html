@@ -932,7 +932,7 @@
                 .style("fill", function(d){
                     for (i = 0; i < crimeDevidedByStates.length; i++){
                         if (crimeDevidedByStates[i].StateFull == d.properties.name){
-                            return colorFilter(crimeDevidedByStates[i].InstitutionNumber)
+                            return colorFilter(crimeDevidedByStates[i].InstitutionNumber);
                         }
                     }
                 })
