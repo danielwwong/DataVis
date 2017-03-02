@@ -3,6 +3,46 @@
     <head>
         <title>Crimes in U.S. Institutions</title>
         <style type  = "text/css">
+            .section{
+                font-size: 6em;
+                text-align: center;
+            }
+            #menu li a,a{
+                text-decoration:none;
+            }
+            #menu{
+                z-index:70;
+                position:fixed;
+            }
+            #menu li{
+                display:inline-block;
+                margin:10px;
+                color:#000;
+                background:#fff;
+                background:rgba(255,255,255,.5);
+                -webkit-border-radius:10px;
+                border-radius:10px;
+            }
+            #menu li a, a:hover{
+                color:#000;
+            }
+            #menu li:hover{
+                background:rgba(255,255,255,.8);
+            }
+            #menu li a{
+                padding:9px 18px;
+                display:block;
+            }
+            #menu{
+                padding:0;
+            }
+            #menu{
+                top:0;
+                left:0;
+                height:40px;
+                width:100%;
+                margin:0;
+            }
             div.tooltip{
                 position: absolute;
                 text-align: center;
@@ -42,10 +82,31 @@
         </style>
     </head>
     <body>
-        <h1>Crimes in U.S. University</h1>
+        <link rel="stylesheet" type="text/css" href="Data/jquery.fullPage.css" />
+        <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+        <script type="text/javascript" src="Data/jquery.fullPage.js"></script>
         <script src="https://d3js.org/d3.v3.min.js"></script>
         <script src="https://d3js.org/topojson.v1.min.js"></script>
         <script src="https://d3js.org/queue.v1.min.js"></script>
+        <script type="text/javascript">
+            $(document).ready(function(){
+                $('#fullpage').fullpage({
+                    sectionsColor: ['#f2f2f2', '#4BBFC3', '#7BAABE', 'whitesmoke', '#000'],
+                    anchors:['section1', 'section2', 'section3'],
+                    menu: '#menu'
+                });
+            });
+        </script>
+        <ul id="menu">
+            <li><a href="#section1">First section</a></li>
+            <li><a href="#section2">Second section</a></li>
+            <li><a href="#section3">Third section</a></li>
+        </ul>
+        <div id="fullpage">
+            <div class="section" id="part1"/></div>
+            <div class="section" id="part2"></div>
+            <div class="section" id="part3"></div>
+        </div>
         <script>
             var USMap, div, USMapS, projection, path, projection2, path2, arc, donutChart, pathForDonut, originalDataForDonut, dataForDonut, donutData, drawDonut, dataForGenderBar, genderBarWidth, genderBar, genderBarYScale, genderBarYAxisScale, genderBarFlag, smallMapFlag, dataForCrimeBar, crimeBarWidth, crimeBar, crimeBarYScale, crimeBarYAxisScale, crimeBarFlag, dataForInstitutionBar, institutionBarWidth, institutionBar, institutionBarYScale, institutionBarYAxisScale, institutionBarFlag;
             var dataForDonut = [];
@@ -53,7 +114,7 @@
             .domain([0, 100])
             .range([0, 352]);
             //SVG
-            var svg = d3.select("body").append("svg")
+            var svg = d3.select("#part1").append("svg")
             .classed("chart", true)
             .attr("width", 1272)
             .attr("height", 560);
@@ -76,7 +137,7 @@
             .translate([636, 250])
             .scale([1000]);
             
-            var svgFilter = d3.select("body").append("svg")
+            var svgFilter = d3.select("#part2").append("svg")
             .attr("width", widthFilter)
             .attr("height", heightFilter)
             .style('display','block')
