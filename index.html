@@ -24,6 +24,21 @@
                 stroke: none;
                 font-size: 12px;
             }
+            pathFilter {
+                stroke-width: 0.25px;
+            }
+            div.tooltipFilter {
+                position: absolute;
+                text-align: center;
+                width: 100px;
+                height: 30px;
+                padding: 2px;
+                font: 13px sans-serif;
+                background: white;
+                border: 2px;
+                border-radius: 5px;
+                pointer-events: none;
+            }
         </style>
     </head>
     <body>
@@ -52,13 +67,50 @@
             
             path = d3.geo.path().projection(projection);
             
+            //SVG2
+            var widthFilter = 1272,
+            heightFilter = 560,
+            centeredFilter;
+            
+            var projectionFilter = d3.geo.albersUsa()
+            .translate([636, 250])
+            .scale([1000]);
+            
+            var svgFilter = d3.select("body").append("svg")
+            .attr("width", widthFilter)
+            .attr("height", heightFilter)
+            .style('display','block')
+            .style('margin', 'auto');
+            
+            var pathFilter = d3.geo.path()
+            .projection(projectionFilter);
+            
+            var gFilter = svgFilter.append("g");
+            
+            var divFilter = d3.select("body")
+            .append("div")
+            .attr("class", "tooltipFilter")
+            .style("opacity", 0.7);
+            
+            var colorFilter = d3.scale.threshold()
+            .domain([0, 20, 40, 60, 80, 100, 120, 140, 160, 180])
+            .range(['#f7fbff','#deebf7','#c6dbef','#9ecae1','#6baed6','#4292c6','#2171b5','#08519c','#08306b', 'black']);
+            
+            svgFilter.append("text")
+            .attr("x", 150)
+            .attr("y", 30).style("font-size", "25px")
+            .text("The Distribution of Institution")
+            .attr("pointer-events", "none");
+            
             queue()
             .defer(d3.json, "Data/states.json")
             .defer(d3.csv, "Data/crimeDevidedByStates.csv")
             .defer(d3.csv, "Data/schoolType.csv")
+            .defer(d3.csv, "Data/dataset.csv")
+            .defer(d3.csv, "Data/sum.csv")
             .await(mapping);
             
-            function mapping(error, states, crimeDevidedByStates, schoolType){
+            function mapping(error, states, crimeDevidedByStates, schoolType, datasetFull, sum){
                 if (error){
                     console.log(error);
                 }
@@ -868,8 +920,158 @@
                 for (var i = 0; i < crimeDevidedByStates.length; i++){
                     d3.select("#s" + crimeDevidedByStates[i].ID).moveToFront();
                 }
+                
+                //SVG2
+                gFilter.selectAll("pathUS")
+                .data(states.features)
+                .enter()
+                .append("path")
+                .style("stroke-width", 1)
+                .style("stroke", "grey")
+                .attr("d", pathFilter)
+                .style("fill", function(d){
+                    for (i = 0; i < crimeDevidedByStates.length; i++){
+                        if (crimeDevidedByStates[i].StateFull == d.properties.name){
+                            return colorFilter(crimeDevidedByStates[i].InstitutionNumber)
+                        }
+                    }
+                })
+                .style("opacity", 1)
+                .on("click", clicked)
+                .on("mouseover", function(d){
+                    
+                    num = document.getElementById("nNumber").value;
+                    type = document.getElementById("nType").value;
+                    
+                    var institution = new Array();
+                    var crimeNum = new Array();
+                    var state;
+                    
+                    for (i = 0; i < crimeDevidedByStates.length; i++){
+                    
+                        if (crimeDevidedByStates[i].StateFull == d.properties.name){
+                            state = crimeDevidedByStates[i].State;
+                            divFilter.html(d.properties.name + ":<br/>" + crimeDevidedByStates[i].InstitutionNumber)
+                           .style("left", (d3.event.pageX) + "px")
+                           .style("top", (d3.event.pageY - 25) + "px");
+                        }
+                    }
+                    
+                    for(i = 0; i < datasetFull.length; i ++){
+                        if(datasetFull[i].State == state){
+                    
+                            if (num == "female" && Number(datasetFull[i].women_total) > Number(datasetFull[i].men_total)){}
+                            else if (num == "male" && Number(datasetFull[i].women_total) < Number(datasetFull[i].men_total)){}
+                            else continue;
+                    
+                            if (datasetFull[i].Sector_desc.substring(0, 6) == type || datasetFull[i].Sector_desc.substring(0, 7) == type){
+                                institution.push(datasetFull[i].INSTNM+" ("+datasetFull[i].BRANCH+")");
+                                crimeNum.push(Number(sum[i].sum)-3);
+                            }
+                        }
+                    }
+                    
+                    //Bubble Sort
+                    for (i = 0; i < crimeNum.length; i++){
+                        for (var j = i; j < crimeNum.length; j++){
+                            if (crimeNum[i] > crimeNum[j]){
+                                var temp1 = crimeNum[i];
+                                crimeNum[i] = crimeNum[j];
+                                crimeNum[j] = temp1;
+                           
+                               var temp2 = institution[i];
+                               institution[i] = institution[j];
+                               institution[j] = temp2;
+                            }
+                        }
+                    }
+                    
+                    svgFilter.selectAll(".instName").remove();
+                    
+                    svgFilter.append("text")
+                    .attr("class", "instName")
+                    .attr("x", 792)
+                    .attr("y", 370)
+                    .style("font-size", 12)
+                    .text("Top 5 Safest Institutions")
+                    .attr("pointer-events", "none");
+                    
+                    for (i = 0; i < crimeNum.length; i++){
+                        if (i > 4) {break;}
+                        svgFilter.append("text")
+                        .attr("class", "instName")
+                        .attr("x", 792)
+                        .attr("y", 400 + i*30)
+                        .style("font-size", 11)
+                        .text(institution[i])
+                        .attr("pointer-events", "none");
+                    }
+                    
+                });
+                
+                svgFilter.append("rect")
+                .attr("x", 772)
+                .attr("y", 340)
+                .attr("width", 500)
+                .attr("height", 220)
+                .attr("r", 5)
+                .style("fill", "white")
+                .style("opacity", 0.7) 
+                .attr("pointer-events", "none");
+                
+                function clicked(d) {
+                    
+                    var x, y, k;
+                    if (d && centeredFilter !== d){
+                        var centroid = pathFilter.centroid(d);
+                        x = centroid[0];
+                        y = centroid[1];
+                        k = 3.5;
+                        centeredFilter = d;
+                        svgFilter.selectAll("path").transition().style("opacity", 0.3).duration(500);
+                        d3.select(this).transition().style("opacity", 1).duration(500).delay(500);
+                    }
+                    else{
+                        x = widthFilter / 2;
+                        y = heightFilter / 2;
+                        k = 1;
+                        centeredFilter = null;
+                        svgFilter.selectAll("path").transition().style("opacity", 1).duration(1000);
+                    }
+                    gFilter.selectAll("path")
+                    .classed("active", centeredFilter && function(d) { return d === centeredFilter; });
+                    gFilter.transition()
+                    .duration(750)
+                    .attr("transform", "translate(" + widthFilter / 2 + "," + heightFilter / 2 + ")scale(" + k + ")translate(" + -x + "," + -y + ")")
+                    .style("stroke-width", 1.5 / k + "px");
+                }
 
             }
+        
+            for(i = 0; i < 8; i++){
+                svgFilter.append("rect")
+                .attr("x", 30 + 20*i)
+                .attr("y", heightFilter - 25)
+                .attr("width", 20)
+                .attr("height", 10)
+                .style("stroke", "grey")
+                .attr("fill", colorFilter(i*20));
+            
+                svgFilter.append("text")
+                .attr("x", 30 + 20*i)
+                .attr("y", heightFilter)
+                .style("font-size", 10)
+                .text(i*20);
+            }
+            svgFilter.append("text")
+            .attr("x", 190)
+            .attr("y", heightFilter)
+            .style("font-size", 10)
+            .text(160);
+        
         </script>
+        <select id="nNumber" style="display: inline-block; width: 100px; text-align: right; margin-left: 39px;" > <option value ="female">More Female</option> <option value ="male">More Male</option></select>
+        
+        <select id="nType" style="display: inline-block; width: 100px; text-align: right; margin-left: 39px;" > <option value ="Public">Public</option> <option value ="Private">Private</option></select>
     </body>
 </html>
