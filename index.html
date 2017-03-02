@@ -151,7 +151,7 @@
             var divFilter = d3.select("body")
             .append("div")
             .attr("class", "tooltipFilter")
-            .style("opacity", 0.7);
+            .style("opacity", 0);
             
             var colorFilter = d3.scale.threshold()
             .domain([0, 20, 40, 60, 80, 100, 120, 140, 160, 180])
@@ -1004,6 +1004,10 @@
                     num = document.getElementById("nNumber").value;
                     type = document.getElementById("nType").value;
                     
+                    divFilter.transition()
+                    .duration(200)
+                    .style("opacity", 0.8);
+                    
                     var institution = new Array();
                     var crimeNum = new Array();
                     var state;
@@ -1068,6 +1072,11 @@
                         .attr("pointer-events", "none");
                     }
                     
+                })
+                .on("mouseout", function(d){
+                    divFilter.transition()
+                    .duration(500)
+                    .style("opacity", 0);
                 });
                 
                 svgFilter.append("rect")
