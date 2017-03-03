@@ -180,11 +180,61 @@
             h1{
                 text-align: center;
             }
-            p{
+            .para{
                 font-family: Arial, Helvetica, sans-serif;
                 font-size: 20px;
                 font-weight: 900;
                 text-align: center;
+            }
+            #textTeam{
+                position: absolute;
+                left:200px;
+                top:100px;
+                font-size:30px;
+                font-weight:bold;
+            }
+            .textSmall{
+                font-size: 20px;
+            }
+            #textName1{
+                position: absolute;
+                left:200px;
+                top:150px;
+            }
+            #gitHub1{
+                position: absolute;
+                left:360px;
+                top:150px;
+            }
+            #textName2{
+                position: absolute;
+                left:200px;
+                top:200px;
+            }
+            #gitHub2{
+                position: absolute;
+                left:360px;
+                top:200px;
+            }
+            #textName3{
+                position: absolute;
+                left:200px;
+                top:250px;
+            }
+            #gitHub3{
+                position: absolute;
+                left:360px;
+                top:250px;
+            }
+            #download{
+                position: absolute;
+                left:850px;
+                top:130px;
+            }
+            #youtube{
+                position: absolute;
+                left:28vw;
+                top:46vh;
             }
         </style>
     </head>
@@ -207,9 +257,9 @@
         <div class="background">
             <div class="transbox">
                 <h1>U.S. Campus Security</h1>
-                <p>When people consider which colleges to attend, safety is of great concern. By a statistical report, it says there were 36 Chinese students died in U.S at the year of 2016. Given the data of campus crimes’ records in the year from 2012 to 2014, we summed up all the different types’ crime records in each campus, and grouped it by states.</p>
-                <p>In the visualization work, we will provide two parts. In the first part, viewers can have an overview of US map. Darker color represents more serious crime rates. In the second part, we further offered filter function, so that when people has desirable state choice.</p>
-                <p>Enjoy your safe campus life!</p>
+                <p class="para">When people consider which college to attend, safety is always the great concern. By a statistical report, it says there were 36 Chinese students died in U.S at the year of 2016. Given the data of campus crimes’ records in the year from 2012 to 2014, we summed up all the different types’ crime records in each campus, and grouped it by states.</p>
+                <p class="para">In the visualization work, we will provide two parts. In the first part, viewers can have an overview of the U.S. map. Darker color represents more serious crime rates. In the second part, we further offered filter function, so that viewers could choose their own best campuses.</p>
+                <p class="para">Enjoy your safe campus life!</p>
             </div>
         </div>
         <ul id="menu">
@@ -1474,58 +1524,45 @@
             .style("font-size", 10)
             .text(160);
             
-            var part4svg = d3.select("#part3").append("svg")
-            .attr("width", 1272)
-            .attr("height", 320);
-            
-            part4svg.append("text")
-            .attr("x", 200)
-            .attr("y", 150)
-            .style("font-size", 30)
-            .style("font-weight", "bold")
+            d3.select("#part3").append("text")
+            .attr("id", "textTeam")
             .text("Team");
             
-            part4svg.append("text")
-            .attr("x", 200)
-            .attr("y", 200)
-            .style("font-size", 20)
+            d3.select("#part3").append("text")
+            .attr("class", "textSmall")
+            .attr("id", "textName1")
             .text("Zhanfeng Huang");
             
-            part4svg.append("text")
-            .attr("x", 360)
-            .attr("y", 200)
-            .style("font-size", 20)
+            d3.select("#part3").append("text")
+            .attr("class", "textSmall")
+            .attr("id", "gitHub1")
             .text("GitHub: danielwwong");
             
-            part4svg.append("text")
-            .attr("x", 200)
-            .attr("y", 250)
-            .style("font-size", 20)
+            d3.select("#part3").append("text")
+            .attr("class", "textSmall")
+            .attr("id", "textName2")
             .text("Qiankun Li");
             
-            part4svg.append("text")
-            .attr("x", 360)
-            .attr("y", 250)
-            .style("font-size", 20)
+            d3.select("#part3").append("text")
+            .attr("class", "textSmall")
+            .attr("id", "gitHub2")
             .text("GitHub: Qiankun0103");
             
-            part4svg.append("text")
-            .attr("x", 200)
-            .attr("y", 300)
-            .style("font-size", 20)
+            d3.select("#part3").append("text")
+            .attr("class", "textSmall")
+            .attr("id", "textName3")
             .text("Yujun Tian");
             
-            part4svg.append("text")
-            .attr("x", 360)
-            .attr("y", 300)
-            .style("font-size", 20)
+            d3.select("#part3").append("text")
+            .attr("class", "textSmall")
+            .attr("id", "gitHub3")
             .text("GitHub: duoshyyigirl");
             
             d3.select("#part3").append("div")
-            .html("<a href='https://github.com/danielwwong/DataVisFinal/raw/gh-pages/Process%20Book.pdf'><input class = 'button' type = 'submit' value = 'Download Process Book'/></a>");
+            .html("<a id='download' href='https://github.com/danielwwong/DataVisFinal/raw/gh-pages/Process%20Book.pdf'><input class = 'button' type = 'submit' value = 'Download Process Book'/></a>");
             
             d3.select("#part3").append("g")
-            .html('<iframe width="560" height="315" src="https://www.youtube.com/embed/vebh31KO6XQ" frameborder="0" allowfullscreen></iframe>');
+            .html('<iframe id="youtube" width="560" height="315" src="https://www.youtube.com/embed/vebh31KO6XQ" frameborder="0" allowfullscreen></iframe>');
 
         </script>
     </body>
