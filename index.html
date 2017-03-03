@@ -30,7 +30,6 @@
             div.transbox p{
                 margin: 50px 40px;
                 font-weight: bold;
-                font-size:
                 color: #000000;
             }
             p.serif{
@@ -167,24 +166,24 @@
             var svg = d3.select("#part1").append("svg")
             .classed("chart", true)
             .attr("width", 1272)
-            .attr("height", 560);
+            .attr("height", 600);
             
             var container = svg.append("g").classed("container-group", true);
             container.append("g").classed("chart-group", true);
             
             projection = d3.geo.albersUsa()
-            .translate([636, 250])
+            .translate([636, 300])
             .scale([1000]);
             
             path = d3.geo.path().projection(projection);
             
             //SVG2
             var widthFilter = 1272,
-            heightFilter = 560,
+            heightFilter = 600,
             centeredFilter;
             
             var projectionFilter = d3.geo.albersUsa()
-            .translate([636, 250])
+            .translate([436, 300])
             .scale([1000]);
             
             var svgFilter = d3.select("#part2").append("svg")
@@ -283,7 +282,7 @@
                 .enter()
                 .append("path")
                 .attr("d", arc)
-                .attr("transform", "translate(900, 150)")
+                .attr("transform", "translate(900, 190)")
                 .attr("fill", function(d, i){
                       return donutColor[i];
                 })
@@ -333,7 +332,7 @@
                 .range([0, 200]);
                 var genderBarXAxis = svg.append("g")
                 .attr("class", "axis")
-                .attr("transform", "translate(28, 550)")
+                .attr("transform", "translate(28, 590)")
                 .style("opacity", 0)
                 .call(d3.svg.axis()
                     .scale(barXScale)
@@ -345,7 +344,7 @@
                 .range([200, 0]);
                 var genderBarYAxis = svg.append("g")
                 .attr("class", "axis")
-                .attr("transform", "translate(28, 350)")
+                .attr("transform", "translate(28, 390)")
                 .style("opacity", 0)
                 .call(d3.svg.axis()
                     .scale(genderBarYAxisScale)
@@ -371,7 +370,7 @@
                 .range([0, 200]);
                 var crimeBarXAxis = svg.append("g")
                 .attr("class", "axis")
-                .attr("transform", "translate(461, 550)")
+                .attr("transform", "translate(461, 590)")
                 .style("opacity", 0)
                 .call(d3.svg.axis()
                     .scale(barXScale)
@@ -383,7 +382,7 @@
                 .range([200, 0]);
                 var crimeBarYAxis = svg.append("g")
                 .attr("class", "axis")
-                .attr("transform", "translate(461, 350)")
+                .attr("transform", "translate(461, 390)")
                 .style("opacity", 0)
                 .call(d3.svg.axis()
                     .scale(crimeBarYAxisScale)
@@ -409,7 +408,7 @@
                 .range([0, 200]);
                 var institutionBarXAxis = svg.append("g")
                 .attr("class", "axis")
-                .attr("transform", "translate(894, 550)")
+                .attr("transform", "translate(894, 590)")
                 .style("opacity", 0)
                 .call(d3.svg.axis()
                     .scale(barXScale)
@@ -421,7 +420,7 @@
                 .range([200, 0]);
                 var institutionBarYAxis = svg.append("g")
                 .attr("class", "axis")
-                .attr("transform", "translate(894, 350)")
+                .attr("transform", "translate(894, 390)")
                 .style("opacity", 0)
                 .call(d3.svg.axis()
                     .scale(institutionBarYAxisScale)
@@ -517,7 +516,7 @@
                         .duration(500)
                         .each("start", function(){
                             d3.select(this)
-                            .attr("y", 550 - 200)
+                            .attr("y", 590 - 200)
                             .attr("height", 200)
                             .attr("fill", "orange");
                         })
@@ -536,7 +535,7 @@
                             .transition()
                             .duration(300)
                             .attr("y", function(d){
-                                return 550 - genderBarYScale(d);
+                                return 590 - genderBarYScale(d);
                             })
                             .attr("height", function(d){
                                 return genderBarYScale(d);
@@ -622,7 +621,7 @@
                         .duration(500)
                         .each("start", function(){
                             d3.select(this)
-                            .attr("y", 550 - 200)
+                            .attr("y", 590 - 200)
                             .attr("height", 200)
                             .attr("fill", "orange");
                         })
@@ -641,7 +640,7 @@
                             .transition()
                             .duration(300)
                             .attr("y", function(d){
-                                return 550 - crimeBarYScale(d);
+                                return 590 - crimeBarYScale(d);
                             })
                             .attr("height", function(d){
                                 return crimeBarYScale(d);
@@ -726,7 +725,7 @@
                         .duration(500)
                         .each("start", function(){
                             d3.select(this)
-                            .attr("y", 550 - 200)
+                            .attr("y", 590 - 200)
                             .attr("height", 200)
                             .attr("fill", "orange");
                         })
@@ -745,7 +744,7 @@
                             .transition()
                             .duration(300)
                             .attr("y", function(d){
-                                return 550 - institutionBarYScale(d);
+                                return 590 - institutionBarYScale(d);
                             })
                             .attr("height", function(d){
                                 return institutionBarYScale(d);
@@ -877,7 +876,7 @@
                 
                 //Small U.S. Map
                 projection2 = d3.geo.albersUsa()
-                .translate([350, 150])
+                .translate([350, 190])
                 .scale([600]);
                 
                 path2 = d3.geo.path().projection(projection2);
@@ -1106,8 +1105,9 @@
                     svgFilter.append("text")
                     .attr("class", "instName")
                     .attr("x", 832)
-                    .attr("y", 370)
-                    .style("font-size", 12)
+                    .attr("y", 210)
+                    .style("font-size", 13)
+                    .style("font-weight", "bold")
                     .text("Top 5 Safest Institutions")
                     .attr("pointer-events", "none");
                     
@@ -1116,7 +1116,7 @@
                         svgFilter.append("text")
                         .attr("class", "instName")
                         .attr("x", 832)
-                        .attr("y", 400 + i*30)
+                        .attr("y", 240 + i*30)
                         .style("font-size", 11)
                         .text(institution[i])
                         .attr("pointer-events", "none");
@@ -1131,9 +1131,9 @@
                 
                 svgFilter.append("rect")
                 .attr("x", 812)
-                .attr("y", 340)
+                .attr("y", 180)
                 .attr("width", 460)
-                .attr("height", 220)
+                .attr("height", 200)
                 .attr("r", 5)
                 .style("fill", "#C9FFE5")
                 .style("opacity", 0.5)
