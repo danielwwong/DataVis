@@ -42,6 +42,16 @@
             body{
                 margin: 0px;
             }
+            #nNumber{
+                position:absolute;
+                top:10vh;
+                left:65vw;
+            }
+            #nType{
+                position:absolute;
+                top:10vh;
+                left:78vw;
+            }
             .section{
                 font-size: 6em;
                 text-align: center;
@@ -58,7 +68,7 @@
                 margin:10px;
                 color:#000;
                 background:#fff;
-                background:rgba(255,255,255,.5);
+                background:rgba(255,255,255,0.8);
                 -webkit-border-radius:10px;
                 border-radius:10px;
             }
@@ -66,7 +76,7 @@
                 color:#000;
             }
             #menu li:hover{
-                background:rgba(255,255,255,.8);
+                background:rgba(255,255,255,1);
             }
             #menu li a{
                 padding:9px 18px;
@@ -103,10 +113,10 @@
                 stroke: none;
                 font-size: 12px;
             }
-            pathFilter {
+            pathFilter{
                 stroke-width: 0.25px;
             }
-            div.tooltipFilter {
+            div.tooltipFilter{
                 position: absolute;
                 text-align: center;
                 width: 100px;
@@ -151,13 +161,23 @@
         </ul>
         <div id="fullpage">
             <div class="section" id="part1"></div>
-            <div class="section" id="part2"></div>
+            <div class="section" id="part2">
+                <select id="nNumber" style="display: inline-block; width: 100px; text-align: right; margin-left: 39px;" >
+                    <option value ="female">More Female</option>
+                    <option value ="male">More Male</option>
+                </select>
+                <select id="nType" style="display: inline-block; width: 100px; text-align: right; margin-left: 39px;" >
+                    <option value ="Public">Public</option>
+                    <option value ="Private">Private</option>
+                </select>
+            </div>
             <div class="section" id="part3"></div>
             <div class="section" id="part4"></div>
             <div class="section" id="part5"></div>
         </div>
         <script>
-            var USMap, div, USMapS, projection, path, projection2, path2, arc, donutChart, pathForDonut, originalDataForDonut, dataForDonut, donutData, drawDonut, dataForGenderBar, genderBarWidth, genderBar, genderBarYScale, genderBarYAxisScale, genderBarFlag, smallMapFlag, dataForCrimeBar, crimeBarWidth, crimeBar, crimeBarYScale, crimeBarYAxisScale, crimeBarFlag, dataForInstitutionBar, institutionBarWidth, institutionBar, institutionBarYScale, institutionBarYAxisScale, institutionBarFlag;
+            var USMap, div, USMapS, projection, path, projection2, path2, arc, donutChart, pathForDonut, originalDataForDonut, dataForDonut, donutData, drawDonut, dataForGenderBar, genderBarWidth, genderBar, genderBarYScale, genderBarYAxisScale, genderBarFlag, genderResult, smallMapFlag, dataForCrimeBar, crimeBarWidth, crimeBar, crimeBarYScale, crimeBarYAxisScale, crimeBarFlag, dataForInstitutionBar, institutionBarWidth, institutionBar, institutionBarYScale, institutionBarYAxisScale, institutionBarFlag, resultFlag;
+            var decimal = d3.format(".4f");
             var dataForDonut = [];
             var barXScale = d3.scale.linear()
             .domain([0, 100])
@@ -261,6 +281,59 @@
                     });
                 };
                 
+                //Text
+                var donutText = svg.append("text")
+                .attr("x", 1050)
+                .attr("y", 90)
+                .style("opacity", 0)
+                .style("font-size", 16);
+                
+                var genderBarText = svg.append("text")
+                .attr("x", 195)
+                .attr("y", 380)
+                .style("opacity", 0)
+                .style("font-size", 16);
+                
+                var crimeBarText = svg.append("text")
+                .attr("x", 695)
+                .attr("y", 380)
+                .style("opacity", 0)
+                .style("font-size", 16);
+                
+                var institutionBarText = svg.append("text")
+                .attr("x", 1095)
+                .attr("y", 380)
+                .style("opacity", 0)
+                .style("font-size", 16);
+                
+                //U.S. Map Legend
+                for (i = 0; i < 9; i++){
+                    svg.append("rect")
+                    .attr("id", "mapLegend" + i)
+                    .attr("x", 30)
+                    .attr("y", 50 + 20 * i)
+                    .attr("width", 20)
+                    .attr("height", 20)
+                    .style("stroke", "grey")
+                    .style("opacity", 0)
+                    .attr("fill", color(i*73));
+                    
+                    svg.append("text")
+                    .attr("id", "mapLegendText" + i)
+                    .attr("x", 53)
+                    .attr("y", 55 + 20 * i)
+                    .style("font-size", 10)
+                    .style("opacity", 0)
+                    .text(i*73);
+                }
+                svg.append("text")
+                .attr("id", "mapLegendText9")
+                .attr("x", 53)
+                .attr("y", 235)
+                .style("font-size", 10)
+                .style("opacity", 0)
+                .text(657);
+                
                 //Donut Chart
                 originalDataForDonut = [];
                 for (var i = 0; i < 9; i++){
@@ -313,6 +386,28 @@
                         .style("opacity", 0);
                     }
                 });
+                
+                //Donut Chart Legend
+                var schoolTypeFullName = ["Private Non-Profit, 4-Year or Above", "Public, 2-Year", "Public, 4-Year or Above", "Private For-Profit, 4-Year or Above", "Private Non-Profit, 2-Year", "Private For Profit, 2-Year", "Public, Less-Than 2-Year", "Private For-Profit, Less-Than 2-Year", "Privat Non-Profti, Less-Than 2-Year"];
+                for (i = 0; i < 9; i++){
+                    svg.append("rect")
+                    .attr("id", "donutLegend" + i)
+                    .attr("x", 1050)
+                    .attr("y", 100 + 20 * i)
+                    .attr("width", 20)
+                    .attr("height", 20)
+                    .style("stroke", "grey")
+                    .style("opacity", 0)
+                    .attr("fill", donutColor[i]);
+                    
+                    svg.append("text")
+                    .attr("id", "donutLegendText" + i)
+                    .attr("x", 1073)
+                    .attr("y", 115 + 20 * i)
+                    .style("font-size", 10)
+                    .style("opacity", 0)
+                    .text(schoolTypeFullName[i]);
+                }
                 
                 //Gender Ratio Bar
                 dataForGenderBar = [];
@@ -489,6 +584,7 @@
                                 dataForDonut[7] = dataset[i][14];
                                 dataForDonut[8] = dataset[i][15];
                                 genderBarFlag = i;
+                                genderResult = decimal(dataset[i][3] / dataset[i][4]);
                                 crimeBarFlag = i;
                                 institutionBarFlag = i;
                             }
@@ -504,6 +600,44 @@
                     
                         USMapS.transition()
                         .duration(500)
+                        .style("opacity", 1);
+                    
+                        for (var i = 0; i < 9; i++){
+                            d3.select("#mapLegend" + i).transition()
+                            .duration(500)
+                            .style("opacity", 1);
+                            d3.select("#mapLegendText" + i).transition()
+                            .duration(500)
+                            .style("opacity", 1);
+                            d3.select("#donutLegend" + i).transition()
+                            .duration(500)
+                            .style("opacity", 1);
+                            d3.select("#donutLegendText" + i).transition()
+                            .duration(500)
+                            .style("opacity", 1);
+                        }
+                        d3.select("#mapLegendText9").transition()
+                        .duration(500)
+                        .style("opacity", 1);
+                    
+                        donutText.transition()
+                        .duration(500)
+                        .text(d.properties.name)
+                        .style("opacity", 1);
+                    
+                        genderBarText.transition()
+                        .duration(500)
+                        .text("Gender Ratio (M/F): " + genderResult)
+                        .style("opacity", 1);
+                    
+                        crimeBarText.transition()
+                        .duration(500)
+                        .text(dataset[crimeBarFlag][2] + " crimes totally")
+                        .style("opacity", 1);
+                    
+                        institutionBarText.transition()
+                        .duration(500)
+                        .text(dataset[institutionBarFlag][6] + " instituions totally")
                         .style("opacity", 1);
                     
                         //Donut Chart
@@ -562,7 +696,7 @@
                                     div.transition()
                                     .duration(200)
                                     .style("opacity", 0.8);
-                                    div.html(dataset[tip][5] + "<br/>"  + d)
+                                    div.html(dataset[tip][5] + "<br/>"  + decimal(d))
                                     .style("left", (d3.event.pageX) + "px")
                                     .style("top", (d3.event.pageY - 28) + "px");
                                 
@@ -588,12 +722,19 @@
                                             dataForDonut[6] = dataset[i][13];
                                             dataForDonut[7] = dataset[i][14];
                                             dataForDonut[8] = dataset[i][15];
+                                            genderResult = decimal(dataset[i][3] / dataset[i][4]);
+                                            resultFlag = i;
                                         }
                                     }
                                 
                                     donutData = donutChart(dataForDonut);
                                     drawDonut.data(donutData)
                                     .attr("d", arc);
+                                
+                                    donutText.text(dataset[tip][5]);
+                                    genderBarText.text("Gender Ratio (M/F): " + genderResult);
+                                    crimeBarText.text(dataset[resultFlag][2] + " crimes totally");
+                                    institutionBarText.text(dataset[resultFlag][6] + " instituions totally");
                                 }
                             })
                             .on("mouseout", function(d){
@@ -693,12 +834,19 @@
                                             dataForDonut[6] = dataset[i][13];
                                             dataForDonut[7] = dataset[i][14];
                                             dataForDonut[8] = dataset[i][15];
+                                            genderResult = decimal(dataset[i][3] / dataset[i][4]);
+                                            resultFlag = i;
                                         }
                                     }
                                 
                                     donutData = donutChart(dataForDonut);
                                     drawDonut.data(donutData)
                                     .attr("d", arc);
+                                
+                                    donutText.text(dataset[tip][5]);
+                                    genderBarText.text("Gender Ratio (M/F): " + genderResult);
+                                    crimeBarText.text(dataset[resultFlag][2] + " crimes totally");
+                                    institutionBarText.text(dataset[resultFlag][6] + " instituions totally");
                                 }
                             })
                             .on("mouseout", function(d){
@@ -797,12 +945,19 @@
                                             dataForDonut[6] = dataset[i][13];
                                             dataForDonut[7] = dataset[i][14];
                                             dataForDonut[8] = dataset[i][15];
+                                            genderResult = decimal(dataset[i][3] / dataset[i][4]);
+                                            resultFlag = i;
                                         }
                                     }
                                 
                                     donutData = donutChart(dataForDonut);
                                     drawDonut.data(donutData)
                                     .attr("d", arc);
+                                
+                                    donutText.text(dataset[tip][5]);
+                                    genderBarText.text("Gender Ratio (M/F): " + genderResult);
+                                    crimeBarText.text(dataset[resultFlag][2] + " crimes totally");
+                                    institutionBarText.text(dataset[resultFlag][6] + " instituions totally");
                                 }
                             })
                             .on("mouseout", function(d){
@@ -918,8 +1073,22 @@
                                 dataForDonut[7] = dataset[i][14];
                                 dataForDonut[8] = dataset[i][15];
                                 genderBarFlag = i;
+                                genderResult = decimal(dataset[i][3] / dataset[i][4]);
                             }
                         }
+                    
+                        donutText.text(d.properties.name)
+                        .style("opacity", 1);
+                    
+                        genderBarText.text("Gender Ratio (M/F): " + genderResult)
+                        .style("opacity", 1);
+                    
+                        crimeBarText.text(dataset[genderBarFlag][2] + " crimes totally")
+                        .style("opacity", 1);
+                    
+                        institutionBarText.text(dataset[genderBarFlag][6] + " instituions totally")
+                        .style("opacity", 1);
+                    
                         for (var i = 0; i < dataset.length; i++){
                             if (i != genderBarFlag){
                                 d3.select("#genderBar" + i).attr("fill", "rgba(0, 0, 255, 0.5)");
@@ -958,7 +1127,6 @@
                             d3.select("#crimeBar" + i).attr("fill", "rgba(0, 0, 255, 0.5)");
                             d3.select("#institutionBar" + i).attr("fill", "rgba(0, 0, 255, 0.5)");
                         }
-                    
                     }
                 })
                 .on("click", function(d){
@@ -973,6 +1141,40 @@
                         .style("opacity", 1);
                     
                         div.transition()
+                        .duration(500)
+                        .style("opacity", 0);
+                    
+                        for (var i = 0; i < 9; i++){
+                            d3.select("#mapLegend" + i).transition()
+                            .duration(600)
+                            .style("opacity", 0);
+                            d3.select("#mapLegendText" + i).transition()
+                            .duration(600)
+                            .style("opacity", 0);
+                            d3.select("#donutLegend" + i).transition()
+                            .duration(600)
+                            .style("opacity", 0);
+                            d3.select("#donutLegendText" + i).transition()
+                            .duration(600)
+                            .style("opacity", 0);
+                        }
+                        d3.select("#mapLegendText9").transition()
+                        .duration(600)
+                        .style("opacity", 0);
+                    
+                        donutText.transition()
+                        .duration(500)
+                        .style("opacity", 0);
+                    
+                        genderBarText.transition()
+                        .duration(500)
+                        .style("opacity", 0);
+                    
+                        crimeBarText.transition()
+                        .duration(500)
+                        .style("opacity", 0);
+                    
+                        institutionBarText.transition()
                         .duration(500)
                         .style("opacity", 0);
                     
@@ -1134,12 +1336,11 @@
                 .attr("y", 180)
                 .attr("width", 460)
                 .attr("height", 200)
-                .attr("r", 5)
-                .style("fill", "#C9FFE5")
-                .style("opacity", 0.5)
+                .style("fill", "#00C968")
+                .style("opacity", 0.1)
                 .attr("pointer-events", "none");
                 
-                function clicked(d) {
+                function clicked(d){
                     
                     var x, y, k;
                     if (d && centeredFilter !== d){
@@ -1190,8 +1391,5 @@
             .text(160);
         
         </script>
-        <select id="nNumber" style="display: inline-block; width: 100px; text-align: right; margin-left: 39px;" > <option value ="female">More Female</option> <option value ="male">More Male</option></select>
-        
-        <select id="nType" style="display: inline-block; width: 100px; text-align: right; margin-left: 39px;" > <option value ="Public">Public</option> <option value ="Private">Private</option></select>
     </body>
 </html>
