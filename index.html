@@ -1,8 +1,46 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title>Crimes in U.S. Institutions</title>
+        <title>U.S. Campus Security</title>
         <style type = "text/css">
+            .button{
+                -moz-box-shadow:inset 0px -3px 7px 0px #29bbff;
+                -webkit-box-shadow:inset 0px -3px 7px 0px #29bbff;
+                box-shadow:inset 0px -3px 7px 0px #29bbff;
+                background:-webkit-gradient(linear, left top, left bottom, color-stop(0.05, #2dabf9), color-stop(1, #0688fa));
+                background:-moz-linear-gradient(top, #2dabf9 5%, #0688fa 100%);
+                background:-webkit-linear-gradient(top, #2dabf9 5%, #0688fa 100%);
+                background:-o-linear-gradient(top, #2dabf9 5%, #0688fa 100%);
+                background:-ms-linear-gradient(top, #2dabf9 5%, #0688fa 100%);
+                background:linear-gradient(to bottom, #2dabf9 5%, #0688fa 100%);
+                filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#2dabf9', endColorstr='#0688fa',GradientType=0);
+                background-color:#2dabf9;
+                -moz-border-radius:10px;
+                -webkit-border-radius:10px;
+                border-radius:10px;
+                display:inline-block;
+                cursor:pointer;
+                color:#ffffff;
+                font-family:Arial;
+                font-size:15px;
+                padding:9px 23px;
+                text-decoration:none;
+                text-shadow:0px 1px 0px #263666;
+            }
+            .button:hover{
+                background:-webkit-gradient(linear, left top, left bottom, color-stop(0.05, #0688fa), color-stop(1, #2dabf9));
+                background:-moz-linear-gradient(top, #0688fa 5%, #2dabf9 100%);
+                background:-webkit-linear-gradient(top, #0688fa 5%, #2dabf9 100%);
+                background:-o-linear-gradient(top, #0688fa 5%, #2dabf9 100%);
+                background:-ms-linear-gradient(top, #0688fa 5%, #2dabf9 100%);
+                background:linear-gradient(to bottom, #0688fa 5%, #2dabf9 100%);
+                filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#0688fa', endColorstr='#2dabf9',GradientType=0);
+                background-color:#0688fa;
+            }
+            .button:active{
+                position:relative;
+                top:1px;
+            }
             div.background{
                 background-size: contain;
                 background-position: center center;
@@ -16,7 +54,7 @@
             }
             div.transbox{
                 width: 80%;
-                height: 60%;
+                height: 65%;
                 margin: 10vw;
                 margin-top: 20vh;
                 background-color: #ffffff;
@@ -34,12 +72,12 @@
             }
             #nNumber{
                 position:absolute;
-                top:10vh;
+                top:20vh;
                 left:65vw;
             }
             #nType{
                 position:absolute;
-                top:10vh;
+                top:20vh;
                 left:78vw;
             }
             select{
@@ -139,6 +177,9 @@
                 border-radius: 5px;
                 pointer-events: none;
             }
+            h1{
+                text-align: center;
+            }
             p{
                 font-family: Arial, Helvetica, sans-serif;
                 font-size: 20px;
@@ -157,25 +198,25 @@
         <script type="text/javascript">
             $(document).ready(function(){
                 $('#fullpage').fullpage({
-                    sectionsColor: ['#F0F8FF', '#C9FFE5', '#EFDECD', '#A1CAF1', '#F4BBFF'],
-                    anchors:['section1', 'section2', 'section3', 'section4', 'section5'],
+                    sectionsColor: ['#F0F8FF', '#C9FFE5', '#FEE0D2'],
+                    anchors:['overview', 'campus_info', 'campus_choice', 'team'],
                     menu: '#menu'
                 });
             });
         </script>
         <div class="background">
             <div class="transbox">
+                <h1>U.S. Campus Security</h1>
                 <p>When people consider which colleges to attend, safety is of great concern. By a statistical report, it says there were 36 Chinese students died in U.S at the year of 2016. Given the data of campus crimes’ records in the year from 2012 to 2014, we summed up all the different types’ crime records in each campus, and grouped it by states.</p>
                 <p>In the visualization work, we will provide two parts. In the first part, viewers can have an overview of US map. Darker color represents more serious crime rates. In the second part, we further offered filter function, so that when people has desirable state choice.</p>
                 <p>Enjoy your safe campus life!</p>
             </div>
         </div>
         <ul id="menu">
-            <li><a href="#section1">Overview</a></li>
-            <li><a href="#section2">Second section</a></li>
-            <li><a href="#section3">Third section</a></li>
-            <li><a href="#section4">Forth section</a></li>
-            <li><a href="#section5">Fifth section</a></li>
+            <li><a href="#overview">Overview</a></li>
+            <li><a href="#campus_info">Campus Information</a></li>
+            <li><a href="#campus_choice">Campus Choice</a></li>
+            <li><a href="#team">Team</a></li>
         </ul>
         <div id="fullpage">
             <div class="section" id="part1"></div>
@@ -190,8 +231,7 @@
                 </select>
             </div>
             <div class="section" id="part3"></div>
-            <div class="section" id="part4"></div>
-            <div class="section" id="part5"></div>
+            <div class="section"></div>
         </div>
         <script>
             var USMap, div, USMapS, projection, path, projection2, path2, arc, donutChart, pathForDonut, originalDataForDonut, dataForDonut, donutData, drawDonut, dataForGenderBar, genderBarWidth, genderBar, genderBarYScale, genderBarYAxisScale, genderBarFlag, genderResult, smallMapFlag, dataForCrimeBar, crimeBarWidth, crimeBar, crimeBarYScale, crimeBarYAxisScale, crimeBarFlag, dataForInstitutionBar, institutionBarWidth, institutionBar, institutionBarYScale, institutionBarYAxisScale, institutionBarFlag, resultFlag;
@@ -214,6 +254,24 @@
             .scale([1000]);
             
             path = d3.geo.path().projection(projection);
+            
+            svg.append("text")
+            .attr("x", 890)
+            .attr("y", 35).style("font-size", "25px")
+            .text("U.S. Campus Crime Distribution");
+            
+            var hintRect = svg.append("rect")
+            .attr("x", 545)
+            .attr("y", 530)
+            .attr("height", 30)
+            .attr("width", 126)
+            .attr("fill", "rgba(0, 0, 255, 0.1)");
+            
+            var hintText = svg.append("text")
+            .attr("x", 550)
+            .attr("y", 550)
+            .style("font-size", "15px")
+            .text("click a state and try");
             
             //SVG2
             var widthFilter = 1272,
@@ -246,8 +304,8 @@
             
             svgFilter.append("text")
             .attr("x", 150)
-            .attr("y", 30).style("font-size", "25px")
-            .text("The Distribution of Institution")
+            .attr("y", 60).style("font-size", "25px")
+            .text("Safe Campus Choice")
             .attr("pointer-events", "none");
             
             queue()
@@ -607,6 +665,14 @@
                                 institutionBarFlag = i;
                             }
                         }
+                    
+                        hintRect.transition()
+                        .duration(600)
+                        .style("opacity", 0);
+                    
+                        hintText.transition()
+                        .duration(600)
+                        .style("opacity", 0);
                     
                         USMap.transition()
                         .duration(600)
@@ -1407,7 +1473,60 @@
             .attr("y", heightFilter)
             .style("font-size", 10)
             .text(160);
-        
+            
+            var part4svg = d3.select("#part3").append("svg")
+            .attr("width", 1272)
+            .attr("height", 320);
+            
+            part4svg.append("text")
+            .attr("x", 200)
+            .attr("y", 150)
+            .style("font-size", 30)
+            .style("font-weight", "bold")
+            .text("Team");
+            
+            part4svg.append("text")
+            .attr("x", 200)
+            .attr("y", 200)
+            .style("font-size", 20)
+            .text("Zhanfeng Huang");
+            
+            part4svg.append("text")
+            .attr("x", 360)
+            .attr("y", 200)
+            .style("font-size", 20)
+            .text("GitHub: danielwwong");
+            
+            part4svg.append("text")
+            .attr("x", 200)
+            .attr("y", 250)
+            .style("font-size", 20)
+            .text("Qiankun Li");
+            
+            part4svg.append("text")
+            .attr("x", 360)
+            .attr("y", 250)
+            .style("font-size", 20)
+            .text("GitHub: Qiankun0103");
+            
+            part4svg.append("text")
+            .attr("x", 200)
+            .attr("y", 300)
+            .style("font-size", 20)
+            .text("Yujun Tian");
+            
+            part4svg.append("text")
+            .attr("x", 360)
+            .attr("y", 300)
+            .style("font-size", 20)
+            .text("GitHub: duoshyyigirl");
+            
+            d3.select("#part3").append("div")
+            .html("<a href='https://github.com/danielwwong/DataVisFinal/raw/gh-pages/Process%20Book.pdf'><input class = 'button' type = 'submit' value = 'Download Process Book'/></a>");
+            
+            d3.select("#part3").append("g")
+            .html('<iframe width="560" height="315" src="https://www.youtube.com/embed/vebh31KO6XQ" frameborder="0" allowfullscreen></iframe>');
+
         </script>
     </body>
 </html>
