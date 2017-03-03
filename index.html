@@ -3,6 +3,46 @@
     <head>
         <title>Crimes in U.S. Institutions</title>
         <style type  = "text/css">
+            div.background{
+                background-size: contain;
+                background-position: center center;
+                width: 100vw;
+                height: 100vh;
+                background: url('campus.png') no-repeat;
+                border: 1px solid;
+                border-color: transparent;
+                background-attachment: fixed;
+                background-size: cover;
+            }
+            div.transbox{
+                width: 80%;
+                height: 60%;
+                margin: 10vw;
+                margin-top: 20vh;
+                background-color: #ffffff;
+                border: 1px solid;
+                border-color: transparent;
+                /* for IE */
+                filter:alpha(opacity=60);
+                /* CSS3 standard */
+                opacity:0.6;
+            }
+            div.transbox p{
+                margin: 50px 40px;
+                font-weight: bold;
+                font-size:
+                color: #000000;
+            }
+            p.serif{
+                font-family: "Times New Roman", Times, serif;
+            }
+            p.sansserif{
+                font-family: Arial, Helvetica, sans-serif;
+                font-size: 14px;
+            }
+            body{
+                margin: 0px;
+            }
             .section{
                 font-size: 6em;
                 text-align: center;
@@ -91,21 +131,31 @@
         <script type="text/javascript">
             $(document).ready(function(){
                 $('#fullpage').fullpage({
-                    sectionsColor: ['#f2f2f2', '#4BBFC3', '#7BAABE', 'whitesmoke', '#000'],
-                    anchors:['section1', 'section2', 'section3'],
+                    sectionsColor: ['#F0F8FF', '#C9FFE5', '#EFDECD', '#A1CAF1', '#F4BBFF'],
+                    anchors:['section1', 'section2', 'section3', 'section4', 'section5'],
                     menu: '#menu'
                 });
             });
         </script>
+        <div class="background">
+            <div class="transbox">
+                <p class="sans-serif">This is some text that is placed in the transparent box.</p>
+                <p class="serif">This is some text that is placed in the transparent box.</p>
+            </div>
+        </div>
         <ul id="menu">
             <li><a href="#section1">First section</a></li>
             <li><a href="#section2">Second section</a></li>
             <li><a href="#section3">Third section</a></li>
+            <li><a href="#section4">Forth section</a></li>
+            <li><a href="#section5">Fifth section</a></li>
         </ul>
         <div id="fullpage">
-            <div class="section" id="part1"/></div>
+            <div class="section" id="part1"></div>
             <div class="section" id="part2"></div>
             <div class="section" id="part3"></div>
+            <div class="section" id="part4"></div>
+            <div class="section" id="part5"></div>
         </div>
         <script>
             var USMap, div, USMapS, projection, path, projection2, path2, arc, donutChart, pathForDonut, originalDataForDonut, dataForDonut, donutData, drawDonut, dataForGenderBar, genderBarWidth, genderBar, genderBarYScale, genderBarYAxisScale, genderBarFlag, smallMapFlag, dataForCrimeBar, crimeBarWidth, crimeBar, crimeBarYScale, crimeBarYAxisScale, crimeBarFlag, dataForInstitutionBar, institutionBarWidth, institutionBar, institutionBarYScale, institutionBarYAxisScale, institutionBarFlag;
@@ -1055,7 +1105,7 @@
                     
                     svgFilter.append("text")
                     .attr("class", "instName")
-                    .attr("x", 792)
+                    .attr("x", 832)
                     .attr("y", 370)
                     .style("font-size", 12)
                     .text("Top 5 Safest Institutions")
@@ -1065,7 +1115,7 @@
                         if (i > 4) {break;}
                         svgFilter.append("text")
                         .attr("class", "instName")
-                        .attr("x", 792)
+                        .attr("x", 832)
                         .attr("y", 400 + i*30)
                         .style("font-size", 11)
                         .text(institution[i])
@@ -1080,13 +1130,13 @@
                 });
                 
                 svgFilter.append("rect")
-                .attr("x", 772)
+                .attr("x", 812)
                 .attr("y", 340)
-                .attr("width", 500)
+                .attr("width", 460)
                 .attr("height", 220)
                 .attr("r", 5)
-                .style("fill", "white")
-                .style("opacity", 0.7) 
+                .style("fill", "#C9FFE5")
+                .style("opacity", 0.5)
                 .attr("pointer-events", "none");
                 
                 function clicked(d) {
